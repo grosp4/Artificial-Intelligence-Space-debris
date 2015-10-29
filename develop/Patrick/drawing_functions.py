@@ -32,7 +32,7 @@ import numpy as numblibrary
 
 #  ******************************************************************************/
 # /*
-#  *     functionname: plot_data
+#  *     functionname:          plot_data
 #  *     parameter:
 #  *
 #  *                              - data            data, format TBD!
@@ -94,5 +94,5 @@ def plot_data(data):
     ax.set_ylabel('Y axes')
     ax.set_zlabel('Z axes')
     plt.show()
-    # return wildcard value as testvalue
+    # return __debug__ value as testvalue
     return __debug__
