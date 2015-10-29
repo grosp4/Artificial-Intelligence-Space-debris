@@ -28,10 +28,8 @@ __author__ = 'Patrick'
 #********************************************************************************/
 # Import module and classes from your package here
 #********************************************************************************/
-from Patrick import Mammals
-from Patrick import Birds
-from Patrick import drawing_functions
-from Pedro import sample_file
+import Pedro
+import Patrick
 #********************************************************************************/
 
 
@@ -47,21 +45,43 @@ debug = True
 # main starts here
 #********************************************************************************/
 
+def main():
 
-# Create an object of Mammals class & call a method of it
-myMammal = Mammals()
-myMammal.printMembers()
+    errors = 0
 
-# Create an object of Birds class & call a method of it
-myBird = Birds()
-myBird.printMembers()
+    #goal 1: collect and prepare the dataset to be processed
+    datasetCollected = 1
+    if Pedro.collectDataset() != 0:
+        datasetCollected = 0
+        errors += 1
 
-# print and plot test data as test program
-sample_data = 0
+    #goal 2: plot the dataset
+    datasetPlotted = 1
+    if Patrick.plotDataset() != 0:
+        datasetPlotted = 0
+        errors += 1
 
-# call functions of pedro and patricks packages
-sample_file.sample()
-testvalue = drawing_functions.plot_data(sample_data)
+    # prints for status of goals
+    if datasetCollected:
+        print "\nDataset collected!"
 
-# last print to verifiy success
-print testvalue
+    if not datasetCollected:
+        print "\nDataset NOT collected!"
+
+    if datasetCollected:
+        print "\nDataset plotted!"
+
+    if not datasetCollected:
+        print "\nDataset NOT plotted!"
+
+    if not errors:
+        print "\nEveryting works fine!"
+        return 0
+
+    if errors:
+        print "\n%d errors were found!"
+
+    return 1
+
+if __name__ == "__main__":
+    main()
