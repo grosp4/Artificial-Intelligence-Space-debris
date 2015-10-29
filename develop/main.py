@@ -31,6 +31,7 @@ __author__ = 'Patrick'
 from Patrick import Mammals
 from Patrick import Birds
 from Patrick import drawing_functions
+from Pedro import sample_file
 #********************************************************************************/
 
 
@@ -56,6 +57,11 @@ myBird = Birds()
 myBird.printMembers()
 
 # print and plot test data as test program
-wildcard = debug
-testvalue = drawing_functions.plot_data(wildcard)
+sample_data = 0
+
+# call functions of pedro and patricks packages
+sample_file.sample()
+testvalue = drawing_functions.plot_data(sample_data)
+
+# last print to verifiy success
 print testvalue

@@ -27,13 +27,14 @@ __author__ = 'Patrick'
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as numblibrary
-# generate wildcard database
+
+
 
 #  ******************************************************************************/
 # /*
 #  *     functionname: plot_data
 #  *     parameter:
-#  *                              - wildcard        1= wildcard used, 0= no wildcard
+#  *
 #  *                              - data            data, format TBD!
 #  *
 #  *     returns:                 wildcard value
@@ -41,12 +42,11 @@ import numpy as numblibrary
 #  *                              3 plots, y,x,z f(t) and 3d plot (f(t)
 #  *
 #  *******************************************************************************/
-def plot_data(wildcard):
-    print ('hey')
+def plot_data(data):
     plt.close("all")
 
-    # if wildcard is true we generate random values
-    if wildcard ==1:
+    # if __debug__ is true we generate random values
+    if __debug__ ==1:
 
         random_value_x= 1000*numblibrary.random.random((10,1)) - 1
         random_value_y= 2000*numblibrary.random.random((10,1)) - 1
@@ -57,7 +57,7 @@ def plot_data(wildcard):
         y_value_learnt = random_value_y
         z_value_learnt = random_value_z
 
-    # if wildcard is false, we will use given data
+    # if __debug__ is false, we will use given data (dataset later)
     else:
         # right now we use prepared data
         random_value_x= [1,2,3,4,5,6,7,8,9,10]
@@ -93,7 +93,6 @@ def plot_data(wildcard):
     ax.set_xlabel('X axes')
     ax.set_ylabel('Y axes')
     ax.set_zlabel('Z axes')
-
     plt.show()
     # return wildcard value as testvalue
-    return wildcard
+    return __debug__
