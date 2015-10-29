@@ -15,24 +15,46 @@ __author__ = 'Patrick'
 #  *  \date          29.10.2015
 #  *
 #  *  \remark        Last Modification
-#  *                  \li grosp4, 20.10.2015, Created
+#  *                  \li grosp4, 29.10.2015, Created
 #  *
 #  *
 #  ******************************************************************************/
 # /*
-#  *  functions:     none
-#  *
+#  *  functions:      __init__
+#  *                  printMembers
 #  ******************************************************************************/
 
 
 
 class Birds:
+
+
+    #  ******************************************************************************/
+    # /*
+    #  *     functionname: __init__
+    #  *     parameter:
+    #  *                              - wildcard        description
+    #  *
+    #  *     returns:                 TBD
+    #  *     description:             TBD
+    #  *
+    #  *******************************************************************************/
     def __init__(self):
         ''' Constructor for this class. '''
         # Create some member animals
         self.members = ['Sparrow', 'Robin', 'Duck']
 
 
+    #  ******************************************************************************/
+    # /*
+    #  *     functionname: printMembers
+    #  *     parameter:
+    #  *                              - wildcard        description
+    #  *
+    #  *     returns:                 TBD
+    #  *     description:             TBD
+    #  *
+    #  *******************************************************************************/
     def printMembers(self):
         print('Printing members of the Birds class')
         for member in self.members:
