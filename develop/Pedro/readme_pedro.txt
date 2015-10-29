@@ -1,0 +1,1 @@
+this folder contains only the functions provided by pedro of our AI programm

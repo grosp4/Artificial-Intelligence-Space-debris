@@ -1,0 +1,1 @@
+this folder contains only the main function of our AI programm

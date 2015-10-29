@@ -1,0 +1,1 @@
+this folder contains only the functions provided by patrick of our AI programm
