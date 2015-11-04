@@ -175,7 +175,7 @@ if __name__ =="__main__":
 
     rescale = dataset.rescale()
     outputRescaled = dataset.dataset
-    save_rescaled = dataset.saveToFile(generateFilename(author='Pedro',description='databaseRescaled',extension='.npy',dateToday=True))
+    save_rescaled = dataset.saveToFile(generateFilename(author='Pedro',description='datasetRescaled',extension='.npy',dateToday=True))
     outputDataMatrixFile3 = dataset.getDatasetMatrixFile()
 
     normalized = dataset.normalize()
