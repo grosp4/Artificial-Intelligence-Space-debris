@@ -57,7 +57,7 @@ def main():
 
     #goal 2: plot the dataset
     datasetPlotted = 1
-    if Patrick.plotDataset() != 0:
+    if Patrick.plotData(False) != 0:
         datasetPlotted = 0
         errors += 1
 

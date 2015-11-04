@@ -19,29 +19,31 @@ __author__ = 'Patrick'
 #  *
 #  ******************************************************************************/
 # /*
-#  *  functions:     plot_data
+#  *  functions:     plotDataset
 #  *
 #  ******************************************************************************/
 
 
 import matplotlib.pyplot as plt
+import Pedro as pedro
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as numblibrary
 
 
 #  ******************************************************************************/
 # /*
-#  *     functionname:          plot_data
+#  *     functionname:          plotDataset
 #  *     parameter:
 #  *
-#  *                              - data            data, format TBD!
+#  *
+#  *                              - normalization   True = normalized data, false = not normalized
 #  *
 #  *     returns:                 wildcard value
 #  *     description:             draws plots  based on given parameters
 #  *                              3 plots, y,x,z f(t) and 3d plot (f(t)
 #  *
 #  *******************************************************************************/
-def plot_data(data):
+def plotData(normalization =False):
     plt.close("all")
 
     # if __debug__ is true we generate random values
@@ -55,10 +57,16 @@ def plot_data(data):
     # if __debug__ is false, we will use given data (dataset later)
     else:
 
+        # change path due to its dataset
+        if normalization:
+            file_to_load = pedro.generateFilename("Pedro","datasetNormalized",".npy",True);
 
 
+        else:
+            file_to_load = pedro.generateFilename("Pedro","dataset",".npy",True);
 
-        dataset = numblibrary.load(r'C:\Users\Honor\Desktop\Project AI\dataset_20151029.npy')
+
+        dataset = numblibrary.load(file_to_load)
         data_x = dataset[:,0]
         data_y = dataset[:,1]
         data_z = dataset[:,2]
@@ -91,4 +99,4 @@ def plot_data(data):
     plot3d.set_zlabel('Z axes')
     plt.show()
     # return __debug__ value as testvalue
-    return __debug__
+    return 0
