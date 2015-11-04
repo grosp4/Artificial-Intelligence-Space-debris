@@ -139,11 +139,28 @@ class Dataset():
                 return 1
 
         try:
-            self.dataset = 1/(1+np.abs(dataset))
+            #normalization function
+            self.dataset = 1/(1+np.exp(-self.dataset))
             return 0
 
         except:
             return 3
+
+    def rescale(self,column='all',factor=0.001):
+        if not (self.dataset == np.zeros(self.numberOfInputs)).all():
+            if column == 'all':
+                #all columns get multiplied by a given factor
+                self.dataset = self.dataset * factor
+                return 0
+
+            elif isinstance( column, int ):
+                #one column gets multiplied by a given factor
+                for i in self.data:
+                    i[column] = i[column] * factor
+            else:
+                return 2
+        else:
+            return 1
 
 
 if __name__ =="__main__":
@@ -151,9 +168,16 @@ if __name__ =="__main__":
     dataset = Dataset()
     treat = dataset.extractDataset()
     save = dataset.saveToFile()
+
     outputDataset1 = dataset.dataset
     outputSourceDirectory1 = dataset.getSourceDirectory()
     outputDataMatrixFile1 = dataset.getDatasetMatrixFile()
+
+    rescale = dataset.rescale()
+    outputRescaled = dataset.dataset
+    save_rescaled = dataset.saveToFile(generateFilename(author='Pedro',description='databaseRescaled',extension='.npy',dateToday=True))
+    outputDataMatrixFile3 = dataset.getDatasetMatrixFile()
+
     normalized = dataset.normalize()
     save_normalized = dataset.saveToFile(generateFilename(author='Pedro',description='datasetNormalized',extension='.npy',dateToday=True))
     outputDataset2 = dataset.dataset
@@ -178,6 +202,22 @@ if __name__ =="__main__":
 
     if save == 2:
         print "\nNo data to save!"
+
+    if rescale == 0:
+        print "\nDataset rescaled!"
+        print outputRescaled
+
+    if rescale == 1:
+        print "\nNo dataset to rescale!"
+
+    if rescale == 2:
+        print "\nColumn must be either 'all' or an integer!"
+
+    if save_rescaled == 0:
+        print "\nRescaled data saved to file %s" % dataset.getDatasetMatrixFile()
+
+    if save_rescaled != 0:
+        print "\nError saving rescaled dataset!"
 
     if normalized == 0:
         print '\nDataset normalized!'
