@@ -27,7 +27,7 @@ __author__ = 'Patrick'
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as numblibrary
-import os.path
+
 
 #  ******************************************************************************/
 # /*
@@ -55,9 +55,9 @@ def plot_data(data):
     # if __debug__ is false, we will use given data (dataset later)
     else:
 
-        curdir= os.path.dirname(__file__)
 
-        print "Test module directory is "+curdir
+
+
         dataset = numblibrary.load(r'C:\Users\Honor\Desktop\Project AI\dataset_20151029.npy')
         data_x = dataset[:,0]
         data_y = dataset[:,1]
