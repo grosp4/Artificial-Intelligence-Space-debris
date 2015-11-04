@@ -1,4 +1,4 @@
-__author__ = 'Patrick'
+__author__ = 'Pedro'
 
 # /******************************************************************************/
 # /** \file          main
@@ -68,10 +68,10 @@ def main():
     if not datasetCollected:
         print "\nDataset NOT collected!"
 
-    if datasetCollected:
+    if datasetPlotted:
         print "\nDataset plotted!"
 
-    if not datasetCollected:
+    if not datasetPlotted:
         print "\nDataset NOT plotted!"
 
     if not errors:
@@ -79,7 +79,7 @@ def main():
         return 0
 
     if errors:
-        print "\n%d errors were found!"
+        print "\n%d errors were found!" % errors
 
     return 1
 
