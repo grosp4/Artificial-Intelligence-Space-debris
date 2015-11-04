@@ -151,32 +151,37 @@ if __name__ =="__main__":
     dataset = Dataset()
     treat = dataset.extractDataset()
     save = dataset.saveToFile()
+    outputDataset1 = dataset.dataset
+    outputSourceDirectory1 = dataset.getSourceDirectory()
+    outputDataMatrixFile1 = dataset.getDatasetMatrixFile()
     normalized = dataset.normalize()
     save_normalized = dataset.saveToFile(generateFilename(author='Pedro',description='datasetNormalized',extension='.npy',dateToday=True))
+    outputDataset2 = dataset.dataset
+    outputDataMatrixFile2 = dataset.getDatasetMatrixFile()
 
     print "\nThis is a test to the class Dataset in module gain_dataset"
 
     if treat == 0:
-        print "\nDataset collected from file %s" % dataset.getSourceDirectory()
-        print dataset.dataset
+        print "\nDataset collected from file %s" % outputDataset1
+        print outputDataset1
 
     if treat == 1:
         print "\nDataset not collected. Possibly due to a problem with the input file."
-        print "The directory of the .txt file with the TLE info is %s" % dataset.getSourceDirectory()
+        print "The directory of the .txt file with the TLE info is %s" % outputSourceDirectory1
 
     if save == 0:
-        print "\nDataset saved to directory %s" % dataset.getDatasetMatrixFile()
+        print "\nDataset saved to directory %s" % outputDataMatrixFile1
 
     if save == 1:
         print "\nProblem saving the dataset matrix to a file."
-        print "It should have been stored in : %s" % dataset.getDatasetMatrixFile()
+        print "It should have been stored in : %s" % outputDataMatrixFile1
 
     if save == 2:
         print "\nNo data to save!"
 
     if normalized == 0:
         print '\nDataset normalized!'
-        print dataset.dataset
+        print outputDataset2
 
     if normalized == 1:
         print '\nProblem opening file!'
@@ -188,7 +193,7 @@ if __name__ =="__main__":
         print '\nDataset incompatible with normalization!'
 
     if save_normalized == 0:
-        print '\nNormalized dataset saved to file: %s' % dataset.getDatasetMatrixFile()
+        print '\nNormalized dataset saved to file: %s' % outputDataMatrixFile2
 
     if save_normalized != 0:
         print '\nError saving normalized file!'
