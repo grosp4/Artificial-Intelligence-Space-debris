@@ -61,6 +61,11 @@ def main():
         datasetPlotted = 0
         errors += 1
 
+    datasetTought = 1
+    if Pedro.teach() != 0:
+        datasetTought = 0
+        errors += 1
+
     # prints for status of goals
     if datasetCollected:
         print "\nDataset collected!"
@@ -73,6 +78,12 @@ def main():
 
     if not datasetPlotted:
         print "\nDataset NOT plotted!"
+
+    if datasetTought:
+        print "\nDataset Tought!"
+
+    if not datasetTought:
+        print "\nDataset NOT Tought!"
 
     if not errors:
         print "\nEveryting works fine!"

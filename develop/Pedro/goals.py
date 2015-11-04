@@ -14,3 +14,7 @@ def collectDataset():
             return 2
 
     return 1
+
+def teach():
+
+    return 1
