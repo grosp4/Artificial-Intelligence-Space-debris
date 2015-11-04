@@ -6,7 +6,9 @@ def generateFilename(author ="",description ="dataset",extension=".npy",dateToda
     from datetime import datetime
 
     currentDirectory = getcwd()
-    chdir('..')
+
+    #deactivated for bugfixing reasons, develop folder was missing on windows pcs
+    #chdir('..')
     parentDirectory = getcwd()
     chdir(currentDirectory)
 

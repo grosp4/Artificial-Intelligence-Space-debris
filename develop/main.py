@@ -37,7 +37,7 @@ import Patrick
 #* ******************************************************************************/
 # global variables
 #  ******************************************************************************/
-debug = True
+#debug = True
 #********************************************************************************/
 
 
@@ -57,7 +57,7 @@ def main():
 
     #goal 2: plot the dataset
     datasetPlotted = 1
-    if Patrick.plotData(False) != 0:
+    if Patrick.plotData(0) != 0:
         datasetPlotted = 0
         errors += 1
 
