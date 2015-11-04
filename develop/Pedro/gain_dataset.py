@@ -104,9 +104,13 @@ class Dataset():
 
             return 1
 
-    def saveToFile(self):
+    def saveToFile(self,filename=''):
 
         if not (self.dataset == np.zeros(self.numberOfInputs)).all():
+
+            if not filename == '':
+                self.setDatasetMatrixFile(filename)
+
             try:
                 f = file(self.getDatasetMatrixFile(),self.getOutputWriteMode())
                 np.save(f,self.dataset)
@@ -119,11 +123,36 @@ class Dataset():
         else:
             return 2
 
+    def normalize(self,filename=''):
+        if filename == '':
+            if not (self.dataset == np.zeros(self.numberOfInputs)).all():
+                dataset = self.dataset
+
+            else:
+                return 2
+
+        else:
+            try:
+                dataset = np.load(filename)
+
+            except:
+                return 1
+
+        try:
+            self.dataset = 1/(1+np.abs(dataset))
+            return 0
+
+        except:
+            return 3
+
+
 if __name__ =="__main__":
 
     dataset = Dataset()
     treat = dataset.extractDataset()
     save = dataset.saveToFile()
+    normalized = dataset.normalize()
+    save_normalized = dataset.saveToFile(generateFilename(author='Pedro',description='datasetNormalized',extension='.npy',dateToday=True))
 
     print "\nThis is a test to the class Dataset in module gain_dataset"
 
@@ -144,3 +173,23 @@ if __name__ =="__main__":
 
     if save == 2:
         print "\nNo data to save!"
+
+    if normalized == 0:
+        print '\nDataset normalized!'
+        print dataset.dataset
+
+    if normalized == 1:
+        print '\nProblem opening file!'
+
+    if normalized == 2:
+        print '\nNo dataset to normalize!'
+
+    if normalized == 3:
+        print '\nDataset incompatible with normalization!'
+
+    if save_normalized == 0:
+        print '\nNormalized dataset saved to file: %s' % dataset.getDatasetMatrixFile()
+
+    if save_normalized != 0:
+        print '\nError saving normalized file!'
+
