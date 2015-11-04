@@ -27,8 +27,7 @@ __author__ = 'Patrick'
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as numblibrary
-
-
+import os.path
 
 #  ******************************************************************************/
 # /*
@@ -48,51 +47,48 @@ def plot_data(data):
     # if __debug__ is true we generate random values
     if __debug__ ==1:
 
-        random_value_x= 1000*numblibrary.random.random((10,1)) - 1
-        random_value_y= 2000*numblibrary.random.random((10,1)) - 1
-        random_value_z= 3000*numblibrary.random.random((10,1)) - 1
-        random_time= [1,2,3,4,5,6,7,8,9,10]
-
-        x_value_learnt = random_value_x
-        y_value_learnt = random_value_y
-        z_value_learnt = random_value_z
+        data_x = 1000*numblibrary.random.random((10,1)) - 1
+        data_y = 2000*numblibrary.random.random((10,1)) - 1
+        data_z = 3000*numblibrary.random.random((10,1)) - 1
+        data_t = [1,2,3,4,5,6,7,8,9,10]
 
     # if __debug__ is false, we will use given data (dataset later)
     else:
-        # right now we use prepared data
-        random_value_x= [1,2,3,4,5,6,7,8,9,10]
-        random_value_y= [1,2,3,4,5,6,7,8,9,10]
-        random_value_z= [1,2,3,4,5,6,7,8,9,10]
-        random_time= [1,2,3,4,5,6,7,8,9,10]
 
-        x_value_learnt = random_value_x
-        y_value_learnt = random_value_y
-        z_value_learnt = random_value_z
+        curdir= os.path.dirname(__file__)
 
+        print "Test module directory is "+curdir
+        dataset = numblibrary.load(r'C:\Users\Honor\Desktop\Project AI\dataset_20151029.npy')
+        data_x = dataset[:,0]
+        data_y = dataset[:,1]
+        data_z = dataset[:,2]
+        data_t = dataset[:,3]
+
+        points = dataset[:,2:4]
 
     #Print 3 plots in its own figure, each in function of time
     figure_x = plt.figure()
-    plt.plot (random_time,random_value_x, '-ro')
+    plt.plot (data_t,data_x, '-ro')
     plt.xlabel('time in tbd')
     plt.ylabel('attitude in x (unit:tbd)')
 
     figure_y = plt.figure()
-    plt.plot( random_time,random_value_y, '-bs')
+    plt.plot( data_t,data_y, '-bs')
     plt.xlabel('time in tbd')
     plt.ylabel('attitude in y (unit:tbd)')
 
     figure_z = plt.figure()
-    plt.plot( random_time,random_value_z, '-g^')
+    plt.plot( data_t,data_z, '-g^')
     plt.xlabel('time in tbd')
     plt.ylabel('attitude in z (unit:tbd)')
 
     #print 3d Plot for better visibiality
     fig_3d = plt.figure()
-    ax = fig_3d.add_subplot(111, projection='3d')
-    ax.scatter(random_value_x, random_value_y, random_value_z, c='r', marker='o')
-    ax.set_xlabel('X axes')
-    ax.set_ylabel('Y axes')
-    ax.set_zlabel('Z axes')
+    plot3d = fig_3d.add_subplot(111, projection='3d')
+    plot3d.scatter(data_x, data_y, data_z, c='r', marker='o')
+    plot3d.set_xlabel('X axes')
+    plot3d.set_ylabel('Y axes')
+    plot3d.set_zlabel('Z axes')
     plt.show()
     # return __debug__ value as testvalue
     return __debug__
