@@ -61,7 +61,6 @@ def plotData(normalization =False):
         if normalization:
             file_to_load = pedro.generateFilename("Pedro","datasetNormalized",".npy",True);
 
-
         else:
             file_to_load = pedro.generateFilename("Pedro","dataset",".npy",True);
 
