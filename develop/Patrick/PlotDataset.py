@@ -44,11 +44,11 @@ import time as systemtime
 #  *                              - x_axes_name   name of the x axes
 #  *                              - y_axes_name   name of the y axes
 #  *                              - z_axes_name   name of the z axes
-#  *                              - time_step     time steps in seconds for 4d printing, default = 0
+#  *                              - time_step     time steps in seconds for plotting, default = 0, meaning no time stepped plotting, recommended values 0.00001 < time_step < 0.01
 #  *
 #  *     returns:                 0
 #  *     description:             draws plots  based on given parameters
-#  *                              3 plots, y,x,z f(t) and 3d plot (f(t)
+#  *                              
 #  *
 #  *******************************************************************************/
 def plotData( file_to_load = '', x_axes_name = 'x axes name', y_axes_name = 'y axes name', z_axes_name = 'z axes name ', time_step = 0):
@@ -77,15 +77,29 @@ def plotData( file_to_load = '', x_axes_name = 'x axes name', y_axes_name = 'y a
                     # 2 dimensional -> x,y
                     if dataset_size[1] == 2:
 
-                        data_x_axes = dataset[:,0]
-                        data_y_axes = dataset[:,1]
+                            data_x_axes = dataset[:,0]
+                            data_y_axes = dataset[:,1]
 
-                        #Draw 2 dim diagram
-                        figure_x = plt.figure()
-                        plt.plot(data_y_axes,data_x_axes, '-ro')
-                        plt.xlabel(x_axes_name)
-                        plt.ylabel(y_axes_name)
-                        plt._show
+                            #Draw 2 dim diagram
+                            figure_x = plt.figure()
+                            plt.plot(data_y_axes,data_x_axes, '-ro')
+                            plt.xlabel(x_axes_name)
+                            plt.ylabel(y_axes_name)
+
+
+                            # if we dont have a time step for plotting, we just plot the result
+                            if time_step == 0:
+
+                                    plt._show
+
+                            else:
+                                    plt.ion()
+                                    plt.show()
+
+                                    for time in range (dataset_size[0]):
+                                            plt.plot(data_y_axes,data_x_axes, '-ro')
+                                            plt.draw()
+                                            systemtime.sleep(time_step)
 
 
                     # 3 dimensional -> x,y,z
@@ -102,7 +116,21 @@ def plotData( file_to_load = '', x_axes_name = 'x axes name', y_axes_name = 'y a
                         plot3d.set_xlabel(x_axes_name)
                         plot3d.set_ylabel(y_axes_name)
                         plot3d.set_zlabel(z_axes_name)
-                        plt.show
+
+                        # if we dont have a time step for plotting, we just plot the result
+                        if time_step == 0:
+                                #print 3 dimensional plot
+                                plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='r', marker='o')
+                                plt.show
+
+                        else:
+                                plt.ion()
+                                plt.show()
+
+                                for time in range (dataset_size[0]):
+                                        plot3d.scatter(data_x_axes[time], data_y_axes[time], data_z_axes[time], c='r', marker='o')
+                                        plt.draw()
+                                        systemtime.sleep(time_step)
 
 
                     # 4 dimensional -> x,y,z and a t axis
@@ -113,21 +141,29 @@ def plotData( file_to_load = '', x_axes_name = 'x axes name', y_axes_name = 'y a
                         data_z_axes = dataset[:,2]
                         data_t_axes = dataset[:,3]
 
-                        print(data_y_axes)
-
+                        #print 3 dimensional plot
                         fig_3d = plt.figure()
                         plot3d = fig_3d.add_subplot(111, projection='3d')
-                        #plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='r', marker='o')
                         plot3d.set_xlabel(x_axes_name)
                         plot3d.set_ylabel(y_axes_name)
                         plot3d.set_zlabel(z_axes_name)
-                        plt.ion()
-                        plt.show()
 
-                        for time in range (dataset_size[0]):
-                                plot3d.scatter(data_x_axes[time], data_y_axes[time], data_z_axes[time], c='r', marker='o')
-                                plt.draw()
-                                systemtime.sleep(time_step)
+                        # if we dont have a time step for plotting, we just plot the result
+                        if time_step == 0:
+
+                                #print 3 dimensional plot
+                                print("no timestep!\n")
+                                plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='r', marker='o')
+                                plt.show()
+
+                        else:
+                                plt.ion()
+                                plt.show()
+
+                                for time in range (dataset_size[0]):
+                                        plot3d.scatter(data_x_axes[time], data_y_axes[time], data_z_axes[time], c='r', marker='o')
+                                        plt.draw()
+                                        systemtime.sleep(time_step)
 
 
 
