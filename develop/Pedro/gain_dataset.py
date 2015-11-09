@@ -7,94 +7,59 @@ from filenameGenerator import generateFilename
 
 class Dataset():
 
-    def __init__(self,
-                 satelliteName='ISS (ZARYA)',
-                 sourceDirectory=generateFilename(description="stations",extension=".txt",dateToday=False),
-                 datasetMatrixFile=generateFilename(),
-                 outputWriteMode='wb+',
-                 numberOfSamples=1440,
-                 dataset=None,
-                 numberOfInputs=4
-                 ):
+    def __init__(self):
 
         #satellite name
-        self.satelliteName = satelliteName
+        self.satelliteName = ''
 
         #source directory
-        self.sourceDirectory = sourceDirectory
-
-        #directory of the file where the dataset matrix will be stored
-        self.datasetMatrixFile = datasetMatrixFile
-
-        #the mode in which the system will write the file with (r+,w,wb,wb+,etc..)
-        self.outputWriteMode = outputWriteMode
+        self.sourceDirectory = ''
 
         #the number of samples to collect, which in practice means
         #how many times should the function get_position() from pyorbital
         #will be run
-        self.numberOfSamples = numberOfSamples
+        self.numberOfSamples = 0
 
         #number of inputs of the network, in practice, number of columns of the database matrix
-        self.numberOfInputs = numberOfInputs
+        self.numberOfInputs = 0
 
         #where the treated dataset in Numpy array will be stored
-        self.dataset = np.zeros(self.numberOfInputs)
+        self.dataset = None
 
-    def setSatelliteName(self,name):
-        self.satelliteName = name
+        #diference in seconds between each point to next point of the dataset
+        self.incrementSeconds = 0
 
-    def getSatelliteName(self):
-        return self.satelliteName
+    def extractDataset(self,
+                       satelliteName='ISS (ZARYA)',
+                       sourceDirectory=generateFilename(description = "stations",
+                                                        extension = ".txt",
+                                                        dateToday = False),
+                       referenceDate = (2015,10,28,0,0,0),
+                       numberOfSamples = 1440,
+                       numberOfInputs = 4,
+                       incrementSeconds = 60):
 
-    def setSourceDirectory(self,directory):
-        self.sourceDirectory = directory
-
-    def getSourceDirectory(self):
-        return self.sourceDirectory
-
-    def setDatasetMatrixFile(self,directory):
-        self.datasetMatrixFile = directory
-
-    def getDatasetMatrixFile(self):
-        return self.datasetMatrixFile
-
-    def setOutputWriteMode(self,mode):
-        self.outputWriteMode = mode
-
-    def getOutputWriteMode(self):
-        return self.outputWriteMode
-
-    def setNumberOfSamples(self,number):
-        self.numberOfSamples = number
-
-    def getNumberOfSamples(self):
-        return self.numberOfSamples
-
-    def setNumberOfInputs(self,number):
-        self.numberOfInputs = number
-
-    def getNumberOfInputs(self):
-        return self.numberOfInputs
-
-    def extractDataset(self):
-
-        #generate dataset
-        self.dataset = np.zeros(shape=[1,self.getNumberOfInputs()])
+        self.satelliteName = satelliteName
+        self.sourceDirectory = sourceDirectory
+        self.referenceDate = referenceDate
+        self.numberOfSamples = numberOfSamples
+        self.numberOfInputs = numberOfInputs
+        self.dataset = np.zeros(shape=[1,self.numberOfInputs])
+        self.incrementSeconds = incrementSeconds
 
         try:
             # reading input data
-            input_data = Orbital(self.getSatelliteName(),self.getSourceDirectory())
+            input_data = Orbital(self.satelliteName, self.sourceDirectory)
 
-            # calculate data
-            reference_date = datetime.datetime(2015,10,28,0,0,0)
+            # calculate date
+            date = datetime.datetime(*self.referenceDate)
 
             #1440 for the number of minutes in a day
-            for step in xrange(self.getNumberOfSamples()):
-                #increment the time step in 60 seconds
-                reference_date += datetime.timedelta(0,60)
-                output_data = input_data.get_position(reference_date,normalize=False)
-                self.dataset = np.vstack([self.dataset, np.append(output_data[0],[step])])
-                #dataset.append(output_data[0])
+            for point_n in xrange(self.numberOfSamples):
+                #each point will be collected with a specified difference of seconds
+                date += datetime.timedelta(0,incrementSeconds)
+                output_data = input_data.get_position(date,normalize=False)
+                self.dataset = np.vstack([self.dataset, np.append(output_data[0],[point_n + referenceDate[4]])])
 
             self.dataset = np.delete(self.dataset,0,0)
 
@@ -104,137 +69,147 @@ class Dataset():
 
             return 1
 
-    def saveToFile(self,filename=''):
+    def rescale(self,column='all',factor=0.0001):
+        
+        #test if of wrong type
+        if type(self.dataset).__module__ != np.__name__:
+            return 1
 
-        if not (self.dataset == np.zeros(self.numberOfInputs)).all():
+        if column == 'all':
+            #all columns get multiplied by a given factor
+            self.dataset = self.dataset * factor
+            return 0
 
-            if not filename == '':
-                self.setDatasetMatrixFile(filename)
-
-            try:
-                f = file(self.getDatasetMatrixFile(),self.getOutputWriteMode())
-                np.save(f,self.dataset)
-
-                return 0
-
-            except:
-                return 1
+        elif isinstance( column, int ):
+            #one column gets multiplied by a given factor
+            self.dataset[:, column] =  self.dataset[:, column] * factor
 
         else:
             return 2
 
-    def normalize(self,filename=''):
-        if filename == '':
-            if not (self.dataset == np.zeros(self.numberOfInputs)).all():
-                dataset = self.dataset
+    def normalize(self, normFunct = 'sigmoid', minmax = (-1,1)):
 
-            else:
-                return 2
-
-        else:
+        if type(self.dataset).__module__ != np.__name__:
+            return 1
+        
+        #default normalization function. But can be expanded to support more funcs.
+        if normFunct == 'sigmoid':
             try:
-                dataset = np.load(filename)
+                #normalization function (sigmoid)
+                self.dataset = 1/(1+np.exp(-self.dataset))
+                return 0
 
             except:
-                return 1
+                return 2
+
+        if normFunct == 'minmax':
+
+            X = self.dataset
+
+            #minimum and maximum values of the dataset
+            min = minmax[0]
+            max = minmax[1]
+
+            try:
+                #normalization function (sigmoid)
+
+                X_std = (X - X.min(axis=0)) / (X.max(axis=0) - X.min(axis=0))
+
+                #minmax normalization doesn't need pre-rescaled data
+                # it already rescales it after standardizing
+                X_scaled = X_std * (max - min) + min
+
+                self.dataset = X_scaled
+                return 0
+
+            except:
+                return 3
+
+        else:
+            return 4
+
+
+    def saveToFile(self,filepath = generateFilename(),outputWriteMode='wb+'):
+
+        if type(self.dataset).__module__ != np.__name__:
+            return 1
 
         try:
-            #normalization function
-            self.dataset = 1/(1+np.exp(-self.dataset))
+            f = file(filepath,outputWriteMode)
+            np.save(f,self.dataset)
             return 0
 
         except:
-            return 3
-
-    def rescale(self,column='all',factor=0.001):
-        if not (self.dataset == np.zeros(self.numberOfInputs)).all():
-            if column == 'all':
-                #all columns get multiplied by a given factor
-                self.dataset = self.dataset * factor
-                return 0
-
-            elif isinstance( column, int ):
-                #one column gets multiplied by a given factor
-                for i in self.data:
-                    i[column] = i[column] * factor
-            else:
-                return 2
-        else:
             return 1
 
 
 if __name__ =="__main__":
 
-    dataset = Dataset()
-    treat = dataset.extractDataset()
-    save = dataset.saveToFile()
+    def test(num=1):
 
-    outputDataset1 = dataset.dataset
-    outputSourceDirectory1 = dataset.getSourceDirectory()
-    outputDataMatrixFile1 = dataset.getDatasetMatrixFile()
+        if num == 1:
+            dataset = Dataset()
+            treat = dataset.extractDataset()
 
-    rescale = dataset.rescale()
-    outputRescaled = dataset.dataset
-    save_rescaled = dataset.saveToFile(generateFilename(author='Pedro',description='databaseRescaled',extension='.npy',dateToday=True))
-    outputDataMatrixFile3 = dataset.getDatasetMatrixFile()
+            outputDataset = dataset.dataset
+            outputSourceDirectory = dataset.sourceDirectory
 
-    normalized = dataset.normalize()
-    save_normalized = dataset.saveToFile(generateFilename(author='Pedro',description='datasetNormalized',extension='.npy',dateToday=True))
-    outputDataset2 = dataset.dataset
-    outputDataMatrixFile2 = dataset.getDatasetMatrixFile()
+            rescale = dataset.rescale()
+            outputRescaled = dataset.dataset
 
-    print "\nThis is a test to the class Dataset in module gain_dataset"
+            normalized = dataset.normalize()
+            outputNormalized = dataset.dataset
 
-    if treat == 0:
-        print "\nDataset collected from file %s" % outputDataset1
-        print outputDataset1
+            save = dataset.saveToFile()
 
-    if treat == 1:
-        print "\nDataset not collected. Possibly due to a problem with the input file."
-        print "The directory of the .txt file with the TLE info is %s" % outputSourceDirectory1
+            print "\nThis is a test to the class Dataset in module gain_dataset"
 
-    if save == 0:
-        print "\nDataset saved to directory %s" % outputDataMatrixFile1
+            if treat == 0:
+                print "\nDataset collected from file %s" % outputSourceDirectory
+                print outputDataset
 
-    if save == 1:
-        print "\nProblem saving the dataset matrix to a file."
-        print "It should have been stored in : %s" % outputDataMatrixFile1
+            if treat == 1:
+                print "\nDataset not collected. Possibly due to a problem with the input file."
+                print "The directory of the .txt file with the TLE info is %s" % outputSourceDirectory
 
-    if save == 2:
-        print "\nNo data to save!"
+            if save == 2:
+                print "\nNo data to save!"
 
-    if rescale == 0:
-        print "\nDataset rescaled!"
-        print outputRescaled
+            if rescale == 0:
+                print "\nDataset rescaled!"
+                print outputRescaled
 
-    if rescale == 1:
-        print "\nNo dataset to rescale!"
+            if rescale == 1:
+                print "\nNo dataset to rescale!"
 
-    if rescale == 2:
-        print "\nColumn must be either 'all' or an integer!"
+            if rescale == 2:
+                print "\nColumn must be either 'all' or an integer!"
 
-    if save_rescaled == 0:
-        print "\nRescaled data saved to file %s" % dataset.getDatasetMatrixFile()
+            if normalized == 0:
+                print '\nDataset normalized!'
+                print outputNormalized
 
-    if save_rescaled != 0:
-        print "\nError saving rescaled dataset!"
+            if normalized == 2:
+                print '\nNo dataset to normalize!'
 
-    if normalized == 0:
-        print '\nDataset normalized!'
-        print outputDataset2
+            if normalized == 3:
+                print '\nDataset incompatible with normalization!'
 
-    if normalized == 1:
-        print '\nProblem opening file!'
+            if save == 0:
+                print '\nNormalized dataset saved to file: %s' % generateFilename()
 
-    if normalized == 2:
-        print '\nNo dataset to normalize!'
+            if save != 0:
+                print '\nError saving normalized dataset to file!'
 
-    if normalized == 3:
-        print '\nDataset incompatible with normalization!'
+        if num == 2:
+            dataset = Dataset()
+            treat = dataset.extractDataset()
 
-    if save_normalized == 0:
-        print '\nNormalized dataset saved to file: %s' % outputDataMatrixFile2
+            normalized = dataset.normalize(normFunct='minmax')
+            outputNormalized = dataset.dataset
 
-    if save_normalized != 0:
-        print '\nError saving normalized file!'
+            if normalized == 0:
+                print "Normalized dataset (-1 to 1) with minmax: "
+                print  outputNormalized
 
+    test(2)
