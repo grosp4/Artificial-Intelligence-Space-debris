@@ -48,7 +48,7 @@ import time as systemtime
 #  *
 #  *     returns:                 0
 #  *     description:             draws plots  based on given parameters
-#  *                              
+#  *
 #  *
 #  *******************************************************************************/
 def plotData( file_to_load = '', x_axes_name = 'x axes name', y_axes_name = 'y axes name', z_axes_name = 'z axes name ', time_step = 0):
@@ -82,7 +82,6 @@ def plotData( file_to_load = '', x_axes_name = 'x axes name', y_axes_name = 'y a
 
                             #Draw 2 dim diagram
                             figure_x = plt.figure()
-                            plt.plot(data_y_axes,data_x_axes, '-ro')
                             plt.xlabel(x_axes_name)
                             plt.ylabel(y_axes_name)
 
@@ -112,7 +111,6 @@ def plotData( file_to_load = '', x_axes_name = 'x axes name', y_axes_name = 'y a
                         #print 3 dimensional plot
                         fig_3d = plt.figure()
                         plot3d = fig_3d.add_subplot(111, projection='3d')
-                        plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='r', marker='o')
                         plot3d.set_xlabel(x_axes_name)
                         plot3d.set_ylabel(y_axes_name)
                         plot3d.set_zlabel(z_axes_name)
