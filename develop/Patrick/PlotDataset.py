@@ -28,7 +28,7 @@ import matplotlib.pyplot as plt
 import Pedro as pedro
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as numblibrary
-
+import time as systemtime
 
 #  ******************************************************************************/
 # /*
@@ -36,63 +36,97 @@ import numpy as numblibrary
 #  *     parameter:
 #  *
 #  *
-#  *                              - dataset_typ_to_print   2= raw , 1 = rescaled, 0 = normalized datad
+#  *                              - file_to_load   path including filename
+#  *                              - x_axes_name   name of the x axes,
+#  *                              - y_axes_name   name of the y axes,
+#  *                              - z_axes_name   name of the z axes
+#  *                              - t_axes_name   only used for animations! name of the t axes
 #  *
 #  *     returns:                 0
 #  *     description:             draws plots  based on given parameters
 #  *                              3 plots, y,x,z f(t) and 3d plot (f(t)
 #  *
 #  *******************************************************************************/
-def plotData(dataset_typ_to_print=2):
+def plotData( file_to_load = '', x_axes_name = 'x axes name', y_axes_name = 'y axes name', z_axes_name = 'z axes name ', t_axes_name = 't for animations'):
     plt.close("all")
 
-    if dataset_typ_to_print == 2:
-        file_to_load = pedro.generateFilename("Pedro","dataset",".npy",True)
-
-    if dataset_typ_to_print == 1:
-        file_to_load = pedro.generateFilename("Pedro","databaseRescaled",".npy",True)
+    # check if no filename has been specified, if not abort
+    if file_to_load == '':
+            print("Error in PlotDataset, no filename specified \n")
+            print('Pathname in PlotData path is: %s \n', file_to_load)
 
     else:
-        file_to_load = pedro.generateFilename("Pedro","datasetNormalized",".npy",True)
+            dataset = numblibrary.load(file_to_load)
 
-    dataset = numblibrary.load(file_to_load)
-    if dataset.any:
-        data_x = dataset[:,0]
-        data_y = dataset[:,1]
-        data_z = dataset[:,2]
-        data_t = dataset[:,3]
-        if __debug__:
-            print('Debug: PlotData path: %S \n', file_to_load)
-            print("\n Debug: ")
-            print(dataset )
 
-        points = dataset[:,2:4]
+            # check if all values in dataset are zero
+            if  numblibrary.all(dataset == 0):
+                    print("Error in PlotDataset,can not open file \n")
+                    print('Pathname in PlotData path is: %S \n', file_to_load)
 
-        #Print 3 plots in its own figure, each in function of time
-        figure_x = plt.figure()
-        plt.plot (data_t,data_x, '-ro')
-        plt.xlabel('time in tbd')
-        plt.ylabel('attitude in x (unit:tbd)')
+            # if dataset contains values, we have a valid file, if not abort
+            else:
+                    #  decide wether the matrix is 1, 2, 3, 4 dimensional -> specify plot
+                    dataset_size = dataset.shape
 
-        figure_y = plt.figure()
-        plt.plot( data_t,data_y, '-bs')
-        plt.xlabel('time in tbd')
-        plt.ylabel('attitude in y (unit:tbd)')
+                    print (dataset_size)
+                    # 2 dimensional -> x,y
+                    if dataset_size[1] == 2:
 
-        figure_z = plt.figure()
-        plt.plot( data_t,data_z, '-g^')
-        plt.xlabel('time in tbd')
-        plt.ylabel('attitude in z (unit:tbd)')
+                        data_x_axes = dataset[:,0]
+                        data_y_axes = dataset[:,1]
 
-        #print 3d Plot for better visibiality
-        fig_3d = plt.figure()
-        plot3d = fig_3d.add_subplot(111, projection='3d')
-        plot3d.scatter(data_x, data_y, data_z, c='r', marker='o')
-        plot3d.set_xlabel('X axes')
-        plot3d.set_ylabel('Y axes')
-        plot3d.set_zlabel('Z axes')
-        plt.show()
-        # return __debug__ value as testvalue
-        return 0
-    else:
-        return 1
+                        #Draw 2 dim diagram
+                        figure_x = plt.figure()
+                        plt.plot(data_y_axes,data_x_axes, '-ro')
+                        plt.xlabel(x_axes_name)
+                        plt.ylabel(y_axes_name)
+                        plt._show
+
+
+                    # 3 dimensional -> x,y,z
+                    if dataset_size[1] == 3:
+
+                        data_x_axes = dataset[:,0]
+                        data_y_axes = dataset[:,1]
+                        data_z_axes = dataset[:,2]
+
+                        #print 3 dimensional plot
+                        fig_3d = plt.figure()
+                        plot3d = fig_3d.add_subplot(111, projection='3d')
+                        plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='r', marker='o')
+                        plot3d.set_xlabel(x_axes_name)
+                        plot3d.set_ylabel(y_axes_name)
+                        plot3d.set_zlabel(z_axes_name)
+                        plt.show
+
+
+                    # 4 dimensional -> x,y,z and a t axis
+                    if dataset_size[1] == 4:
+
+                        data_x_axes = dataset[:,0]
+                        data_y_axes = dataset[:,1]
+                        data_z_axes = dataset[:,2]
+                        data_t_axes = dataset[:,3]
+
+                        fig_3d = plt.figure()
+                        plot3d = fig_3d.add_subplot(111, projection='3d')
+                        plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='r', marker='o')
+                        plot3d.set_xlabel(x_axes_name)
+                        plot3d.set_ylabel(y_axes_name)
+                        plot3d.set_zlabel(z_axes_name)
+
+                        plt.show()
+
+
+
+                    else:
+                        print("Debug: This file contains more than 4 dimensions and therefore it can not be drawn, Error in: %S \n", file_to_load)
+
+
+            if __debug__:
+                    print('Debug: PlotData path: %S \n', file_to_load)
+                    print("\n Debug: ")
+                    print(dataset)
+
+    return 0
