@@ -36,18 +36,22 @@ import time as systemtime
 #  *     parameter:
 #  *
 #  *
-#  *                              - file_to_load   path including filename
-#  *                              - x_axes_name   name of the x axes,
-#  *                              - y_axes_name   name of the y axes,
+#  *                              - file_to_load   path including filename, file has to be numpy matrix, max. 4 columns
+#  *                              => 2 dimensions -> x,y plotting
+#  *                              => 3 dimensions -> x,y,z plotting
+#  *                              => 4 dimensions -> x,y,z plotting in function of time  plotting
+#  *
+#  *                              - x_axes_name   name of the x axes
+#  *                              - y_axes_name   name of the y axes
 #  *                              - z_axes_name   name of the z axes
-#  *                              - t_axes_name   only used for animations! name of the t axes
+#  *                              - time_step     time steps in seconds for 4d printing, default = 0
 #  *
 #  *     returns:                 0
 #  *     description:             draws plots  based on given parameters
 #  *                              3 plots, y,x,z f(t) and 3d plot (f(t)
 #  *
 #  *******************************************************************************/
-def plotData( file_to_load = '', x_axes_name = 'x axes name', y_axes_name = 'y axes name', z_axes_name = 'z axes name ', t_axes_name = 't for animations'):
+def plotData( file_to_load = '', x_axes_name = 'x axes name', y_axes_name = 'y axes name', z_axes_name = 'z axes name ', time_step = 0):
     plt.close("all")
 
     # check if no filename has been specified, if not abort
@@ -109,14 +113,22 @@ def plotData( file_to_load = '', x_axes_name = 'x axes name', y_axes_name = 'y a
                         data_z_axes = dataset[:,2]
                         data_t_axes = dataset[:,3]
 
+                        print(data_y_axes)
+
                         fig_3d = plt.figure()
                         plot3d = fig_3d.add_subplot(111, projection='3d')
-                        plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='r', marker='o')
+                        #plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='r', marker='o')
                         plot3d.set_xlabel(x_axes_name)
                         plot3d.set_ylabel(y_axes_name)
                         plot3d.set_zlabel(z_axes_name)
-
+                        plt.ion()
                         plt.show()
+
+                        for time in range (dataset_size[0]):
+                                plot3d.scatter(data_x_axes[time], data_y_axes[time], data_z_axes[time], c='r', marker='o')
+                                plt.draw()
+                                systemtime.sleep(time_step)
+
 
 
 
@@ -124,9 +136,6 @@ def plotData( file_to_load = '', x_axes_name = 'x axes name', y_axes_name = 'y a
                         print("Debug: This file contains more than 4 dimensions and therefore it can not be drawn, Error in: %S \n", file_to_load)
 
 
-            if __debug__:
-                    print('Debug: PlotData path: %S \n', file_to_load)
-                    print("\n Debug: ")
-                    print(dataset)
+
 
     return 0
