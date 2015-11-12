@@ -198,6 +198,8 @@ def collectDataset(version = 3, verbose = False):
 
     if version == 3:
 
+        #======== Input Dataset ===============
+
         inputDataset = Dataset()
 
         #Extract Input Dataset
@@ -215,6 +217,18 @@ def collectDataset(version = 3, verbose = False):
         inputFilePath = generateFilename(description='inputDataset')
         saveInDataset = inputDataset.saveToFile(inputFilePath)
 
+        #Separate Dataset
+        sepInFileX = generateFilename(description='inputDataset_x_t')
+        sepInFileY = generateFilename(description='inputDataset_y_t')
+        sepInFileZ = generateFilename(description='inputDataset_z_t')
+        columnsX_T = [0,3]
+        columnsY_T = [1,3]
+        columnsZ_T = [2,3]
+
+        separateInX = inputDataset.separate(sepInFileX,'',columnsX_T)
+        separateInY = inputDataset.separate(sepInFileY,'',columnsY_T)
+        separateInZ = inputDataset.separate(sepInFileZ,'',columnsZ_T)
+
         #Normalize Input Dataset
         normMethod = 'minmax'
         minmaxValues = (-1,1)
@@ -225,7 +239,16 @@ def collectDataset(version = 3, verbose = False):
         normInFilePath = generateFilename(description='normInputDataset')
         saveNormInput = inputDataset.saveToFile(normInFilePath)
 
-        #===============================
+        #Separate Normalized Output Dataset
+        sepInNormFileX = generateFilename(description='inputNormDataset_x_t')
+        sepInNormFileY = generateFilename(description='inputNormDataset_y_t')
+        sepInNormFileZ = generateFilename(description='inputNormDataset_z_t')
+
+        separateInX = inputDataset.separate(sepInNormFileX,'',columnsX_T)
+        separateInY = inputDataset.separate(sepInNormFileY,'',columnsY_T)
+        separateInZ = inputDataset.separate(sepInNormFileZ,'',columnsZ_T)
+
+        #======== Output Dataset ===============
 
         outputDataset = Dataset()
 
@@ -244,6 +267,18 @@ def collectDataset(version = 3, verbose = False):
         outputFilePath = generateFilename(description='outputDataset')
         saveOutDataset = outputDataset.saveToFile(outputFilePath)
 
+        #Separate Dataset
+        sepOutFileX = generateFilename(description='outputDataset_x_t')
+        sepOutFileY = generateFilename(description='outputDataset_y_t')
+        sepOutFileZ = generateFilename(description='outputDataset_z_t')
+        columnsX_T = [0,3]
+        columnsY_T = [1,3]
+        columnsZ_T = [2,3]
+
+        separateOutX = outputDataset.separate(sepOutFileX,'',columnsX_T)
+        separateOutY = outputDataset.separate(sepOutFileY,'',columnsY_T)
+        separateOutZ = outputDataset.separate(sepOutFileZ,'',columnsZ_T)
+
         #Normalize Ouput Dataset
         normMethod = 'minmax'
         minmaxValues = (-1,1)
@@ -253,6 +288,15 @@ def collectDataset(version = 3, verbose = False):
         #Save Normalized Ouput Values
         normOutFilePath = generateFilename(description='normOutputDataset')
         saveNormOutput = outputDataset.saveToFile(normOutFilePath)
+
+        #Separate Normalized Output Dataset
+        sepOutNormFileX = generateFilename(description='outputNormDataset_x_t')
+        sepOutNormFileY = generateFilename(description='outputNormDataset_y_t')
+        sepOutNormFileZ = generateFilename(description='outputNormDataset_z_t')
+
+        separateOutX = outputDataset.separate(sepOutNormFileX,'',columnsX_T)
+        separateOutY = outputDataset.separate(sepOutNormFileY,'',columnsY_T)
+        separateOutZ = outputDataset.separate(sepOutNormFileZ,'',columnsZ_T)
 
         if extractInDataset + saveInDataset + normInput + saveNormInput + extractOutDataset + saveOutDataset + normOutput + saveNormOutput == 0:
             completed = 0
@@ -309,7 +353,24 @@ def teach(version = 1, verbose = False):
     if version == 2:
 
         NN1 = NN()
-        
+
+        #Load Dataset in Neural Network
+        inputFilePath = generateFilename(description='normInputDataset')
+        outputFilePath = generateFilename(description='normOutputDataset')
+        loadData = NN1.loadData(inputFilePath,outputFilePath)
+
+        #Teach using Pybrain
+        epochs=60
+        hiddenLayers=4
+        teachNN = NN1.teachPyBrain(epochs,hiddenLayers,verbose=False)
+
+        #Save Results (Save outputs for given inputs)
+        saveResultsPath = generateFilename(description='resultsNN')
+        saveResults = NN1.saveResults(saveResultsPath)
+
+        #Save Errors
+        saveErrorsPath = generateFilename(description='errorsNN')
+        saveErrors = NN1.saveError(saveErrorsPath)
 
     return completed
 
@@ -319,7 +380,8 @@ if __name__ == "__main__":
 
     def test(number=1,verbose=True):
         if number == 1:
-            collectDataset(version=3,verbose=verbose)
+            collect = collectDataset(version=3,verbose=verbose)
+            #techNN = teach(version=2,verbose=verbose)
 
 
     test(1)

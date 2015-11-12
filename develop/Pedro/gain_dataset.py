@@ -174,6 +174,7 @@ class Dataset():
                     return 4
 
             except:
+                print "Error!"
                 return 5
 
         else:
