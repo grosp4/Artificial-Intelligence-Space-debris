@@ -2,118 +2,386 @@ __author__ = 'Pedro'
 
 from gain_dataset import Dataset
 from filenameGenerator import generateFilename
+from Pedro.neuralNetwork import NN
+from Patrick import *
 
-def collectDataset(verbose = False):
+def collectDataset(version = 3, verbose = False):
 
     completed = 1
 
-    inputDataset = Dataset()
-    outputDataset = Dataset()
+    #collects dataset (input and output) with sigmoid normalization (rescaling factor of 0.0001)
+    if version == 1:
 
-    inputFilePath = generateFilename(description='inputDataset')
-    outputFilePath = generateFilename(description='outputDataset')
+        inputDataset = Dataset()
+        outputDataset = Dataset()
 
-    extractInDataset = inputDataset.extractDataset()
-    extractedInMatrix = inputDataset.dataset
+        inputFilePath = generateFilename(description='inputDataset')
+        outputFilePath = generateFilename(description='outputDataset')
 
-    rescaleInDataset = inputDataset.rescale()
-    extractedInRescaled = inputDataset.dataset
+        extractInDataset = inputDataset.extractDataset()
+        extractedInMatrix = inputDataset.dataset
 
-    normalizeInDataset = inputDataset.normalize()
-    extractedInNormalized = inputDataset.dataset
+        rescaleInDataset = inputDataset.rescale()
+        extractedInRescaled = inputDataset.dataset
 
-    saveInDataset = inputDataset.saveToFile(inputFilePath)
+        normalizeInDataset = inputDataset.normalize()
+        extractedInNormalized = inputDataset.dataset
 
-    extractOutDataset = outputDataset.extractDataset(referenceDate=(2015,10,28,0,1,0))
-    extractedOutMatrix = outputDataset.dataset
+        saveInDataset = inputDataset.saveToFile(inputFilePath)
 
-    rescaleOutDataset = outputDataset.rescale()
-    extractedOutRescaled = outputDataset.dataset
+        extractOutDataset = outputDataset.extractDataset(referenceDate=(2015,10,28,0,1,0))
+        extractedOutMatrix = outputDataset.dataset
 
-    normalizeOutDataset = outputDataset.normalize()
-    extractedOutNormalized = outputDataset.dataset
+        rescaleOutDataset = outputDataset.rescale()
+        extractedOutRescaled = outputDataset.dataset
 
-    saveOutDataset = outputDataset.saveToFile(outputFilePath)
+        normalizeOutDataset = outputDataset.normalize()
+        extractedOutNormalized = outputDataset.dataset
 
-    #if all of the tasks succeeded (all the methods returned 0), the goal is completed
-    if not (extractInDataset
-            or rescaleInDataset
-            or normalizeInDataset
-            or saveInDataset
-            or extractOutDataset
-            or rescaleOutDataset
-            or normalizeOutDataset
-            or saveOutDataset):
+        saveOutDataset = outputDataset.saveToFile(outputFilePath)
 
-        completed = 0
+        #if all of the tasks succeeded (all the methods returned 0), the goal is completed
+        if not (extractInDataset
+                or rescaleInDataset
+                or normalizeInDataset
+                or saveInDataset
+                or extractOutDataset
+                or rescaleOutDataset
+                or normalizeOutDataset
+                or saveOutDataset):
 
-    #in verbose mode, all important variables are printed
-    if verbose:
-        print "Input file path: %s" % inputFilePath
-        print "Output file path: %s" % outputFilePath
+            completed = 0
 
-        if not extractInDataset:
-            print extractedInMatrix
-            print "Input dataset successfully extracted!"
-        if extractInDataset:
-            print "Problem extracting input dataset!"
+        #in verbose mode, all important variables are printed
+        if verbose:
 
-        if not rescaleInDataset:
-            print extractedInRescaled
-            print "Input dataset successfully rescaled!"
-        if rescaleInDataset:
-            print "Problem rescaling input dataset!"
+            print "Version 1 of goal: Collect Dataset"
+            print
+            print "Input file path: %s" % inputFilePath
+            print "Output file path: %s" % outputFilePath
+            print
 
-        if not normalizeInDataset:
-            print extractedInNormalized
-            print "Input dataset successfully normalized!"
-        if normalizeInDataset:
-            print "Problem normalizing input dataset!"
+            if not extractInDataset:
+                print extractedInMatrix
+                print "Input dataset successfully extracted!"
+            if extractInDataset:
+                print "Problem extracting input dataset!"
 
-        if not saveInDataset:
-            print "Input dataset saved!"
-        if saveInDataset:
-            print "Problem saving input dataset!"
+            if not rescaleInDataset:
+                print extractedInRescaled
+                print "Input dataset successfully rescaled!"
+            if rescaleInDataset:
+                print "Problem rescaling input dataset!"
 
-        if not extractOutDataset:
-            print extractedOutMatrix
-            print "Output dataset successfully extracted!"
-        if extractOutDataset:
-            print "Problem extracting output dataset!"
+            if not normalizeInDataset:
+                print extractedInNormalized
+                print "Input dataset successfully normalized!"
+            if normalizeInDataset:
+                print "Problem normalizing input dataset!"
 
-        if not rescaleOutDataset:
-            print extractedOutRescaled
-            print "Output dataset successfully rescaled!"
-        if rescaleOutDataset:
-            print "Problem rescaling output dataset!"
+            if not saveInDataset:
+                print "Input dataset saved!"
+            if saveInDataset:
+                print "Problem saving input dataset!"
 
-        if not normalizeOutDataset:
-            print extractedOutNormalized
-            print "Output dataset successfully normalized!"
-        if normalizeOutDataset:
-            print "Problem normalizing output dataset!"
+            if not extractOutDataset:
+                print extractedOutMatrix
+                print "Output dataset successfully extracted!"
+            if extractOutDataset:
+                print "Problem extracting output dataset!"
 
-        if not saveOutDataset:
-            print "Output dataset saved!"
-        if rescaleOutDataset:
-            print "Problem saving output dataset!"
+            if not rescaleOutDataset:
+                print extractedOutRescaled
+                print "Output dataset successfully rescaled!"
+            if rescaleOutDataset:
+                print "Problem rescaling output dataset!"
 
-        if not completed:
-            print "Data collection completed!"
-        if completed:
-            print "Data collection not completed!"
+            if not normalizeOutDataset:
+                print extractedOutNormalized
+                print "Output dataset successfully normalized!"
+            if normalizeOutDataset:
+                print "Problem normalizing output dataset!"
+
+            if not saveOutDataset:
+                print "Output dataset saved!"
+            if saveOutDataset:
+                print "Problem saving output dataset!"
+
+            if not completed:
+                print "Data collection completed!"
+            if completed:
+                print "\n\n>>>> Data collection not completed! <<<<"
+
+        return completed
+
+    #collects dataset (input and output) with minmax normalization function
+    if version == 2:
+
+        inputDataset = Dataset()
+        outputDataset = Dataset()
+
+        inputFilePath = generateFilename(description='minmaxinputDataset')
+        outputFilePath = generateFilename(description='minmaxoutputDataset')
+
+        extractInDataset = inputDataset.extractDataset()
+        extractedInMatrix = inputDataset.dataset
+
+        normalizeInDataset = inputDataset.normalize(normFunct='minmax')
+        extractedInNormalized = inputDataset.dataset
+
+        saveInDataset = inputDataset.saveToFile(inputFilePath)
+
+        extractOutDataset = outputDataset.extractDataset(referenceDate=(2015,10,28,0,1,0))
+        extractedOutMatrix = outputDataset.dataset
+
+        normalizeOutDataset = outputDataset.normalize(normFunct='minmax')
+        extractedOutNormalized = outputDataset.dataset
+
+        saveOutDataset = outputDataset.saveToFile(outputFilePath)
+
+        #if all of the tasks succeeded (all the methods returned 0), the goal is completed
+        if not (extractInDataset
+                or normalizeInDataset
+                or saveInDataset
+                or extractOutDataset
+                or normalizeOutDataset
+                or saveOutDataset):
+
+            completed = 0
+
+        if verbose:
+
+            print "Version 2 of goal: Collect Dataset"
+            print
+            print "Input file path: %s" % inputFilePath
+            print "Output file path: %s" % outputFilePath
+            print
+
+            if not extractInDataset:
+                print extractedInMatrix
+                print "Input dataset successfully extracted!"
+            if extractInDataset:
+                print "Problem extracting input dataset!"
+
+            if not normalizeInDataset:
+                print extractedInNormalized
+                print "Input dataset successfully normalized!"
+            if normalizeInDataset:
+                print "Problem normalizing input dataset!"
+
+            if not saveInDataset:
+                print "Input dataset saved!"
+            if saveInDataset:
+                print "Problem saving input dataset!"
+
+            if not extractOutDataset:
+                print extractedOutMatrix
+                print "Output dataset successfully extracted!"
+            if extractOutDataset:
+                print "Problem extracting output dataset!"
+
+            if not normalizeOutDataset:
+                print extractedOutNormalized
+                print "Output dataset successfully normalized!"
+            if normalizeOutDataset:
+                print "Problem normalizing output dataset!"
+
+            if not saveOutDataset:
+                print "Output dataset saved!"
+            if saveOutDataset:
+                print "\n>>> Problem saving output dataset! <<<"
+
+            if not completed:
+                print "Data collection completed!"
+            if completed:
+                print "\n\n>>>> Data collection not completed! <<<<"
+
+    if version == 3:
+
+        #======== Input Dataset ===============
+
+        inputDataset = Dataset()
+
+        #Extract Input Dataset
+        satelliteName = 'ISS (ZARYA)'
+        inputDataFilepath = generateFilename(description = "stations", extension = ".txt", dateToday = False)
+        referenceDate = (2015,10,28,0,0,0)
+        numberOfSamples = 1440
+        numberOfInputs = 4
+        incrementSeconds = 60
+
+        extractInDataset = inputDataset.extractDataset(satelliteName,inputDataFilepath,referenceDate,numberOfSamples,numberOfInputs,incrementSeconds)
+        extractedInMatrix = inputDataset.dataset
+
+        #Save Input Dataset
+        inputFilePath = generateFilename(description='inputDataset')
+        saveInDataset = inputDataset.saveToFile(inputFilePath)
+
+        #Separate Dataset
+        sepInFileX = generateFilename(description='inputDataset_x_t')
+        sepInFileY = generateFilename(description='inputDataset_y_t')
+        sepInFileZ = generateFilename(description='inputDataset_z_t')
+        columnsX_T = [0,3]
+        columnsY_T = [1,3]
+        columnsZ_T = [2,3]
+
+        separateInX = inputDataset.separate(sepInFileX,'',columnsX_T)
+        separateInY = inputDataset.separate(sepInFileY,'',columnsY_T)
+        separateInZ = inputDataset.separate(sepInFileZ,'',columnsZ_T)
+
+        #Normalize Input Dataset
+        normMethod = 'minmax'
+        minmaxValues = (-1,1)
+        normInput = inputDataset.normalize(normMethod,minmaxValues)
+        normInMatrix = inputDataset.dataset
+
+        #Save Normalized Input Values
+        normInFilePath = generateFilename(description='normInputDataset')
+        saveNormInput = inputDataset.saveToFile(normInFilePath)
+
+        #Separate Normalized Output Dataset
+        sepInNormFileX = generateFilename(description='inputNormDataset_x_t')
+        sepInNormFileY = generateFilename(description='inputNormDataset_y_t')
+        sepInNormFileZ = generateFilename(description='inputNormDataset_z_t')
+
+        separateInX = inputDataset.separate(sepInNormFileX,'',columnsX_T)
+        separateInY = inputDataset.separate(sepInNormFileY,'',columnsY_T)
+        separateInZ = inputDataset.separate(sepInNormFileZ,'',columnsZ_T)
+
+        #======== Output Dataset ===============
+
+        outputDataset = Dataset()
+
+        #Extract Ouput Dataset
+        satelliteName = 'ISS (ZARYA)'
+        inputDataFilepath = generateFilename(description = "stations", extension = ".txt", dateToday = False)
+        referenceDate = (2015,10,28,0,1,0) #incremented one minute in relation to the input
+        numberOfSamples = 1440
+        numberOfInputs = 4
+        incrementSeconds = 60
+
+        extractOutDataset = outputDataset.extractDataset(satelliteName,inputDataFilepath,referenceDate,numberOfSamples,numberOfInputs,incrementSeconds)
+        extractedOutMatrix = outputDataset.dataset
+
+        #Save Ouput Dataset
+        outputFilePath = generateFilename(description='outputDataset')
+        saveOutDataset = outputDataset.saveToFile(outputFilePath)
+
+        #Separate Dataset
+        sepOutFileX = generateFilename(description='outputDataset_x_t')
+        sepOutFileY = generateFilename(description='outputDataset_y_t')
+        sepOutFileZ = generateFilename(description='outputDataset_z_t')
+        columnsX_T = [0,3]
+        columnsY_T = [1,3]
+        columnsZ_T = [2,3]
+
+        separateOutX = outputDataset.separate(sepOutFileX,'',columnsX_T)
+        separateOutY = outputDataset.separate(sepOutFileY,'',columnsY_T)
+        separateOutZ = outputDataset.separate(sepOutFileZ,'',columnsZ_T)
+
+        #Normalize Ouput Dataset
+        normMethod = 'minmax'
+        minmaxValues = (-1,1)
+        normOutput = outputDataset.normalize(normMethod,minmaxValues)
+        normOutMatrix = outputDataset.dataset
+
+        #Save Normalized Ouput Values
+        normOutFilePath = generateFilename(description='normOutputDataset')
+        saveNormOutput = outputDataset.saveToFile(normOutFilePath)
+
+        #Separate Normalized Output Dataset
+        sepOutNormFileX = generateFilename(description='outputNormDataset_x_t')
+        sepOutNormFileY = generateFilename(description='outputNormDataset_y_t')
+        sepOutNormFileZ = generateFilename(description='outputNormDataset_z_t')
+
+        separateOutX = outputDataset.separate(sepOutNormFileX,'',columnsX_T)
+        separateOutY = outputDataset.separate(sepOutNormFileY,'',columnsY_T)
+        separateOutZ = outputDataset.separate(sepOutNormFileZ,'',columnsZ_T)
+
+        if extractInDataset + saveInDataset + normInput + saveNormInput + extractOutDataset + saveOutDataset + normOutput + saveNormOutput == 0:
+            completed = 0
+
+        #============================== Verbose ==========================
+
+        if verbose:
+
+            if extractInDataset == 0:
+                print "\nInput dataset extracted!"
 
     return completed
 
-def teach():
+
+def teach(version = 1, verbose = False):
 
     completed = 1
+
+    if version == 1:
+        NN1 = NN()
+
+        inputFilePath = generateFilename(description='minmaxinputDataset')
+        outputFilePath = generateFilename(description='minmaxoutputDataset')
+
+        loadData = NN1.loadData(inputFilePath,outputFilePath)
+
+        train = NN1.teachPyBrain(verbose=False)
+
+        saveResults = NN1.saveResults()
+
+        fileIn = generateFilename(description="networkResults")
+
+        fileOut_x_t = generateFilename(description="NNoutput_x_t")
+        fileOut_y_t = generateFilename(description="NNoutput_y_t")
+        fileOut_z_t = generateFilename(description="NNoutput_z_t")
+
+        dataset = Dataset()
+
+        sepX = dataset.separate(filepathOut=fileOut_x_t,filepathIn=fileIn,columns=[0,3])
+        sepY = dataset.separate(filepathOut=fileOut_y_t,filepathIn=fileIn,columns=[1,3])
+        sepZ = dataset.separate(filepathOut=fileOut_z_t,filepathIn=fileIn,columns=[2,3])
+
+        errorFilepath = generateFilename(description="networkError")
+
+        saveErrors = NN1.saveError(errorFilepath)
+
+        #plotData(fileOut_x_t)
+        #plotData(fileOut_y_t)
+        #plotData(fileOut_z_t)
+
+        completed = 0
+
+
+    if version == 2:
+
+        NN1 = NN()
+
+        #Load Dataset in Neural Network
+        inputFilePath = generateFilename(description='normInputDataset')
+        outputFilePath = generateFilename(description='normOutputDataset')
+        loadData = NN1.loadData(inputFilePath,outputFilePath)
+
+        #Teach using Pybrain
+        epochs=60
+        hiddenLayers=4
+        teachNN = NN1.teachPyBrain(epochs,hiddenLayers,verbose=False)
+
+        #Save Results (Save outputs for given inputs)
+        saveResultsPath = generateFilename(description='resultsNN')
+        saveResults = NN1.saveResults(saveResultsPath)
+
+        #Save Errors
+        saveErrorsPath = generateFilename(description='errorsNN')
+        saveErrors = NN1.saveError(saveErrorsPath)
 
     return completed
 
 if __name__ == "__main__":
-    collect = collectDataset(True)
-    teach = teach()
 
-    if collect == 0 and teach == 0:
-        print "Dataset collected and tought to NN!"
+    #from goals import teach
+
+    def test(number=1,verbose=True):
+        if number == 1:
+            collect = collectDataset(version=3,verbose=verbose)
+            #techNN = teach(version=2,verbose=verbose)
+
+
+    test(1)

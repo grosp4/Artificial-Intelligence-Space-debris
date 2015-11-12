@@ -17,7 +17,7 @@ class NN():
         self.outputDataset = None
 
         #Data that the system outputs
-        self.outputDataset = None
+        self.target = None
         self.numberOfOutputs = numberOfOutputs
         self.numberOfHiddenLayers = numberOfHiddenLayers
         self.l0 = None
@@ -29,6 +29,13 @@ class NN():
         self.l2_error = None
         self.syn0 = None
         self.syn1 = None
+
+        #Data related to the pyBrain teaching
+        self.ds = None
+        self.net = None
+        self.trainer = None
+        self.trainError = None
+        self.results = None
 
     #Loads data matrices (inputs/outputs to the NN)
     def loadData(self,
@@ -56,10 +63,10 @@ class NN():
                 def sigmoid(x,deriv=False):
 
                     if(deriv==True):
-                        return x*(1-x)
+                        return x*(1.0-x)
 
                     else:
-                        return 1/(1+np.exp(-x))
+                        return 1.0/(1.0+np.exp(-x))
 
                 X = self.inputDataset
                 y = self.outputDataset.T
@@ -111,69 +118,128 @@ class NN():
 
         return 1
 
-    def teachPyBrain(self,epochs=5,hiddenLayers=3,verbose=False):
+    def teachPyBrain(self,epochs=60,hiddenLayers=4,verbose=False):
         from pybrain.datasets import SupervisedDataSet
         from pybrain.supervised.trainers import BackpropTrainer
         from pybrain.tools.shortcuts import buildNetwork
 
-        inputData = self.inputDataset
-        outputData = self.outputDataset
+        numberOfColumnsInput = self.inputDataset.shape[1]
+        numberOfColumnsTarget = self.outputDataset.shape[1]
 
-        numberOfColumnsInput = inputData.shape[1]
-        numberOfColumnsTarget = outputData.shape[1]
+        self.ds = SupervisedDataSet(numberOfColumnsInput,numberOfColumnsTarget)
 
-        ds = SupervisedDataSet(numberOfColumnsInput,numberOfColumnsTarget)
+        self.ds.setField('input', self.inputDataset)
+        self.ds.setField('target', self.outputDataset)
 
-        ds.setField('input', inputData)
-        ds.setField('target', outputData)
+        self.net = buildNetwork(numberOfColumnsInput, hiddenLayers, numberOfColumnsTarget)
+        self.trainer = BackpropTrainer(self.net, self.ds)
 
-        net = buildNetwork(numberOfColumnsInput, hiddenLayers, numberOfColumnsTarget)
-        trainer = BackpropTrainer(net, ds)
+        if verbose:
+            print self.inputDataset
 
-        print net['target']
+        self.trainError = np.zeros((1,2))
 
         for epoch in xrange(epochs):
-            trainError = trainer.train()
+
+            #index of epoch should start with 1
+            epoch += 1
+            error = self.trainer.train()
+
+            self.trainError = np.vstack([self.trainError, np.append(epoch,error)])
+
             if verbose:
-                print "Error: %f" % trainError
+                print "Error after epoch %d: %f" % (epoch, error)
+                print "Output: "
+                print self.net.activateOnDataset(self.ds)
+
+        self.trainError = np.delete(self.trainError,0,0)
+
+        self.results = self.net.activateOnDataset(self.ds)
 
         if verbose:
 
-            print "Target: "
-            print net['target']
+            print "Expected output: "
+            print self.outputDataset
 
-            for mod in net.modules:
+            for mod in self.net.modules:
                 print "Module:", mod.name
                 if mod.paramdim > 0:
                     print"--parameters:", mod.params
-                for conn in net.connections[mod]:
+                for conn in self.net.connections[mod]:
                     print "-connection to", conn.outmod.name
                     if conn.paramdim > 0:
                          print "- parameters", conn.params
-                if hasattr(net, "recurrentConns"):
+                if hasattr(self.net, "recurrentConns"):
                     print "Recurrent connections"
-                    for conn in net.recurrentConns:
+                    for conn in self.net.recurrentConns:
                         print "-", conn.inmod.name, " to", conn.outmod.name
                         if conn.paramdim > 0:
                             print "- parameters", conn.params
 
+    def saveResults(self,filepath = generateFilename(description='networkResults'),outputWriteMode='wb+'):
+
+        if type(self.results).__module__ != np.__name__:
+            return 2
+
+        try:
+            f = file(filepath,outputWriteMode)
+            np.save(f,self.results)
+            f.close()
+            return 0
+
+        except:
+            return 1
+
+    def saveError(self,filepath = generateFilename(description='networkError'),outputWriteMode='wb+'):
+
+        if type(self.trainError).__module__ != np.__name__:
+            return 2
+
+        try:
+            f = file(filepath,outputWriteMode)
+            np.save(f,self.trainError)
+            f.close()
+            return 0
+
+        except:
+            return 1
+
 if __name__ == "__main__":
 
-    NN1 = NN()
+    def test(number = 1):
 
-    inputFilePath = generateFilename(description='inputDataset')
-    outputFilePath = generateFilename(description='outputDataset')
+        completed = 1
 
-    loadData = NN1.loadData(inputFilePath,outputFilePath)
+        if number == 1:
 
-    #print "Input dataset: "
-    #print NN1.inputDataset
+            NN1 = NN()
 
-    #print "Output dataset: "
-    #print NN1.outputDataset
+            inputFilePath = generateFilename(description='minmaxinputDataset')
+            outputFilePath = generateFilename(description='minmaxoutputDataset')
 
-    #teaching = NN1.teach()
+            loadData = NN1.loadData(inputFilePath,outputFilePath)
 
-    NN1.teachPyBrain(verbose=True)
+            print NN1.inputDataset
 
-    #print str(np.mean(np.abs(NN1.l2_error)))
+            #print "Input dataset: "
+            #print NN1.inputDataset
+
+            #print "Output dataset: "
+            #print NN1.outputDataset
+
+            #teaching = NN1.teach()
+
+            NN1.teachPyBrain(verbose=True)
+
+
+            #print str(np.mean(np.abs(NN1.l2_error)))
+
+            completed = 0
+
+        if number == 2:
+
+
+
+            completed = 0
+
+    test()
