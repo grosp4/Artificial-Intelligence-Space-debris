@@ -244,9 +244,9 @@ def collectDataset(version = 3, verbose = False):
         sepInNormFileY = generateFilename(description='inputNormDataset_y_t')
         sepInNormFileZ = generateFilename(description='inputNormDataset_z_t')
 
-        separateInX = inputDataset.separate(sepInNormFileX,'',columnsX_T)
-        separateInY = inputDataset.separate(sepInNormFileY,'',columnsY_T)
-        separateInZ = inputDataset.separate(sepInNormFileZ,'',columnsZ_T)
+        separateNormInX = inputDataset.separate(sepInNormFileX,'',columnsX_T)
+        separateNormInY = inputDataset.separate(sepInNormFileY,'',columnsY_T)
+        separateNormInZ = inputDataset.separate(sepInNormFileZ,'',columnsZ_T)
 
         #======== Output Dataset ===============
 
@@ -294,11 +294,31 @@ def collectDataset(version = 3, verbose = False):
         sepOutNormFileY = generateFilename(description='outputNormDataset_y_t')
         sepOutNormFileZ = generateFilename(description='outputNormDataset_z_t')
 
-        separateOutX = outputDataset.separate(sepOutNormFileX,'',columnsX_T)
-        separateOutY = outputDataset.separate(sepOutNormFileY,'',columnsY_T)
-        separateOutZ = outputDataset.separate(sepOutNormFileZ,'',columnsZ_T)
+        separateNormOutX = outputDataset.separate(sepOutNormFileX,'',columnsX_T)
+        separateNormOutY = outputDataset.separate(sepOutNormFileY,'',columnsY_T)
+        separateNormOutZ = outputDataset.separate(sepOutNormFileZ,'',columnsZ_T)
 
-        if extractInDataset + saveInDataset + normInput + saveNormInput + extractOutDataset + saveOutDataset + normOutput + saveNormOutput == 0:
+        if extractInDataset + \
+                saveInDataset + \
+                separateInX + \
+                separateInY + \
+                separateInZ + \
+                normInput + \
+                saveNormInput + \
+                separateNormInX + \
+                separateNormInY + \
+                separateNormInZ + \
+                extractOutDataset + \
+                saveOutDataset + \
+                separateOutX + \
+                separateOutY + \
+                separateOutZ + \
+                normOutput + \
+                saveNormOutput + \
+                separateNormOutX + \
+                separateNormOutY + \
+                separateNormOutZ == 0:
+
             completed = 0
 
         #============================== Verbose ==========================
@@ -349,7 +369,6 @@ def teach(version = 1, verbose = False):
 
         completed = 0
 
-
     if version == 2:
 
         NN1 = NN()
@@ -368,9 +387,24 @@ def teach(version = 1, verbose = False):
         saveResultsPath = generateFilename(description='resultsNN')
         saveResults = NN1.saveResults(saveResultsPath)
 
+        #Separate Results
+        sepResultsFilepathX = generateFilename(description='resultsNN_x_t')
+        sepResultsFilepathY = generateFilename(description='resultsNN_y_t')
+        sepResultsFilepathZ = generateFilename(description='resultsNN_z_t')
+        columnsX_T = [0,3]
+        columnsY_T = [1,3]
+        columnsZ_T = [2,3]
+
+        sepResultsX = Dataset().separate(sepResultsFilepathX,saveResultsPath,columnsX_T)
+        sepResultsY = Dataset().separate(sepResultsFilepathY,saveResultsPath,columnsY_T)
+        sepResultsZ = Dataset().separate(sepResultsFilepathZ,saveResultsPath,columnsZ_T)
+
         #Save Errors
         saveErrorsPath = generateFilename(description='errorsNN')
         saveErrors = NN1.saveError(saveErrorsPath)
+
+        if loadData + teachNN + saveResults + sepResultsX + sepResultsY + sepResultsZ + saveErrors == 0:
+            completed = 0
 
     return completed
 
@@ -380,7 +414,7 @@ if __name__ == "__main__":
 
     def test(number=1,verbose=True):
         if number == 1:
-            collect = collectDataset(version=3,verbose=verbose)
+            #collect = collectDataset(version=3,verbose=verbose)
             #techNN = teach(version=2,verbose=verbose)
 
 
