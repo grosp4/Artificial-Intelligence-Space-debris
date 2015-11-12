@@ -59,15 +59,24 @@ def plotData( list_of_FilesToLoad , list_of_x_AxesNames, list_of_y_AxesNames , l
 
     # check if the list filenames is bigger than zero and if all list have the same length
     if len(list_of_FilesToLoad) == 0        or( len(list_of_FilesToLoad)!= len(list_of_x_AxesNames)
-                                            and len(list_of_FilesToLoad)!= len(list_of_x_AxesNames)
-                                            and len(list_of_FilesToLoad)!= len(list_of_x_AxesNames)
-                                            and len(list_of_FilesToLoad)!= len(list_of_x_AxesNames)
+                                            and len(list_of_FilesToLoad)!= len(list_of_y_AxesNames)
+                                            and len(list_of_FilesToLoad)!= len(list_of_z_AxesNames)
+                                            and len(list_of_FilesToLoad)!= len(list_of_TimeStepValues)
                                             ):
 
             print("Error in PlotDataset, no filename(s) specified or given parameters have different list length, please check your parameters\n")
 
     else:
 
+            #create figures and subplots
+            fig_2d = plt.figure()
+            plot2d= fig_2d.add_subplot(111)
+
+            #prepare for 3D plot
+            fig_3d = plt.figure()
+            plot3d = fig_3d.add_subplot(111, projection='3d')
+
+            # initialize index
             currentListElement = 0
 
             # print as long as we have elements in our list
@@ -94,15 +103,21 @@ def plotData( list_of_FilesToLoad , list_of_x_AxesNames, list_of_y_AxesNames , l
                                     data_y_axes = dataset[:,1]
 
                                     #Draw 2 dim diagram
-                                    figure_x = plt.figure()
                                     plt.xlabel(list_of_x_AxesNames[currentListElement])
                                     plt.ylabel(list_of_y_AxesNames[currentListElement])
 
 
                                     # if we dont have a time step for plotting, we just plot the result
                                     if list_of_TimeStepValues[currentListElement] == 0:
-                                             plt.plot(data_y_axes,data_x_axes, '-ro')
-                                           # plt.show()
+                                             if currentListElement == 0:
+                                                        plot2d.plot(data_y_axes,data_x_axes, 'r*')
+                                             elif currentListElement == 1:
+                                                        plot2d.plot(data_y_axes,data_x_axes, 'gs')
+                                             elif currentListElement == 2:
+                                                        plot2d.plot(data_y_axes,data_x_axes, 'b.')
+                                             elif currentListElement <= 3:
+                                                        plot2d.plot(data_y_axes,data_x_axes, 'm.')
+
 
                                     else:
                                             plt.ion()
@@ -113,7 +128,7 @@ def plotData( list_of_FilesToLoad , list_of_x_AxesNames, list_of_y_AxesNames , l
                                                     plt.draw()
                                                     systemtime.sleep(list_of_TimeStepValues[currentListElement])
 
-
+                                    plt.close(fig_3d)
                             # 3 dimensional -> x,y,z
                             elif dataset_size[1] == 3:
 
@@ -131,8 +146,15 @@ def plotData( list_of_FilesToLoad , list_of_x_AxesNames, list_of_y_AxesNames , l
                                     # if we dont have a time step for plotting, we just plot the result
                                     if list_of_TimeStepValues[currentListElement] == 0:
                                             #print 3 dimensional plot
-                                            plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='r', marker='o')
-                                            #plt.show()
+
+                                            if currentListElement == 0:
+                                                         plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='r', marker='o')
+                                            elif currentListElement == 1:
+                                                         plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='g', marker='*')
+                                            elif currentListElement == 2:
+                                                         plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='m', marker='x')
+                                            elif currentListElement <= 3:
+                                                         plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='b', marker='.')
 
                                     else:
                                             plt.ion()
@@ -143,7 +165,7 @@ def plotData( list_of_FilesToLoad , list_of_x_AxesNames, list_of_y_AxesNames , l
                                                     plt.draw()
                                                     systemtime.sleep(list_of_TimeStepValues[currentListElement])
 
-
+                                    plt.close(fig_2d)
                             # 4 dimensional -> x,y,z and a t axis
                             elif dataset_size[1] == 4:
 
@@ -153,8 +175,6 @@ def plotData( list_of_FilesToLoad , list_of_x_AxesNames, list_of_y_AxesNames , l
                                     data_t_axes = dataset[:,3]
 
                                     #print 3 dimensional plot
-                                    fig_3d = plt.figure()
-                                    plot3d = fig_3d.add_subplot(111, projection='3d')
                                     plot3d.set_xlabel(list_of_x_AxesNames[currentListElement])
                                     plot3d.set_ylabel(list_of_y_AxesNames[currentListElement])
                                     plot3d.set_zlabel(list_of_z_AxesNames[currentListElement])
@@ -164,8 +184,14 @@ def plotData( list_of_FilesToLoad , list_of_x_AxesNames, list_of_y_AxesNames , l
 
                                             #print 3 dimensional plot
                                             print("no timestep!\n")
-                                            plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='r', marker='o')
-                                            #plt.show()
+                                            if currentListElement == 0:
+                                                         plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='r', marker='o')
+                                            elif currentListElement == 1:
+                                                         plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='g', marker='*')
+                                            elif currentListElement == 2:
+                                                         plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='m', marker='x')
+                                            elif currentListElement <= 3:
+                                                         plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='b', marker='.')
 
                                     else:
                                             plt.ion()
@@ -175,8 +201,7 @@ def plotData( list_of_FilesToLoad , list_of_x_AxesNames, list_of_y_AxesNames , l
                                                     plot3d.scatter(data_x_axes[time], data_y_axes[time], data_z_axes[time], c='r', marker='o')
                                                     plt.draw()
                                                     systemtime.sleep(list_of_TimeStepValues[currentListElement])
-
-
+                                    plt.close(fig_2d)
 
 
                             else:
@@ -195,14 +220,14 @@ def plotData( list_of_FilesToLoad , list_of_x_AxesNames, list_of_y_AxesNames , l
 if __name__ == "__main__":
 
         TESTlist_of_FilesToLoad = [ [1,2,3,4] ,[1,2,3,4], [1,2,3,4], [1,2,3,4] ]
-        fil_for_function = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_20151107.npy",
-                            r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_20151107.npy",
-                            r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_20151107.npy",
-                            r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_20151107.npy"
+        fil_for_function = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_20151112.npy",
+                            r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_20151112.npy",
+                            r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_20151112.npy",
+                            r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_20151112.npy"
                             ]
         TESTlist_of_x_AxesNames = [ "Xasdf" ,"Xasdf", "Xasdf", "Xasdf" ]
-        TESTlist_of_y_AxesNames = [ "Xasdf" ,"Xasdf", "Xasdf", "Xasdf" ]
-        TESTlist_of_z_AxesNames = [ "Xasdf" ,"Xasdf", "Xasdf", "Xasdf" ]
+        TESTlist_of_y_AxesNames = [ "Yasdf" ,"Yasdf", "Yasdf", "Yasdf" ]
+        TESTlist_of_z_AxesNames = [ "Zasdf" ,"Zasdf", "Zasdf", "Zasdf" ]
         TESTlist_of_TimeStepValues = [0 , 0, 0, 0]
 
         dataset_1 = numblibrary.load(fil_for_function[0])
