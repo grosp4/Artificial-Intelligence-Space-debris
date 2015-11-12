@@ -4,6 +4,7 @@ from gain_dataset import Dataset
 from filenameGenerator import generateFilename
 from Pedro.neuralNetwork import NN
 from Patrick import *
+import numpy as np
 
 def collectDataset(version = 3, verbose = False):
 
@@ -399,11 +400,45 @@ def teach(version = 1, verbose = False):
         sepResultsY = Dataset().separate(sepResultsFilepathY,saveResultsPath,columnsY_T)
         sepResultsZ = Dataset().separate(sepResultsFilepathZ,saveResultsPath,columnsZ_T)
 
+        #Denormalize Results
+        resultsData = Dataset()
+        resultsData.dataset = NN1.results
+        outputDataset = np.load()
+        resultsData.min = np.load()
+        denormResults = resultsData.denormalize()
+
+        #Save Denormalized Results
+        denormResultsPath = generateFilename(description='denormResultsNN')
+        resultsData.saveToFile(denormResultsPath)
+
+        #Separate Denormalized Results
+        sepDenormResultsFilepathX = generateFilename(description='denormResultsNN_x_t')
+        sepDenormResultsFilepathY = generateFilename(description='denormResultsNN_y_t')
+        sepDenormResultsFilepathZ = generateFilename(description='denormResultsNN_z_t')
+        columnsX_T = [0,3]
+        columnsY_T = [1,3]
+        columnsZ_T = [2,3]
+
+        sepDenormResultsX = Dataset().separate(sepDenormResultsFilepathX,denormResultsPath,columnsX_T)
+        sepDenormResultsY = Dataset().separate(sepDenormResultsFilepathY,denormResultsPath,columnsY_T)
+        sepDenormResultsZ = Dataset().separate(sepDenormResultsFilepathZ,denormResultsPath,columnsZ_T)
+
         #Save Errors
         saveErrorsPath = generateFilename(description='errorsNN')
         saveErrors = NN1.saveError(saveErrorsPath)
 
-        if loadData + teachNN + saveResults + sepResultsX + sepResultsY + sepResultsZ + saveErrors == 0:
+        if loadData + \
+                teachNN + \
+                saveResults + \
+                sepResultsX + \
+                sepResultsY + \
+                sepResultsZ + \
+                denormResults + \
+                sepDenormResultsX + \
+                sepDenormResultsY + \
+                sepDenormResultsZ + \
+                saveErrors == 0:
+
             completed = 0
 
     return completed
@@ -415,7 +450,6 @@ if __name__ == "__main__":
     def test(number=1,verbose=True):
         if number == 1:
             #collect = collectDataset(version=3,verbose=verbose)
-            #techNN = teach(version=2,verbose=verbose)
-
+            techNN = teach(version=2,verbose=verbose)
 
     test(1)
