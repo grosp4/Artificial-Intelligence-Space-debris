@@ -46,6 +46,10 @@ class Dataset():
         self.numberOfInputs = numberOfInputs
         self.dataset = np.zeros(shape=[1,self.numberOfInputs])
         self.incrementSeconds = incrementSeconds
+        self.min = 0
+        self.max = 0
+        self.min_dataset = 0
+        self.max_dataset = 0
 
         try:
             # reading input data
@@ -104,22 +108,22 @@ class Dataset():
 
         if normFunct == 'minmax':
 
-            X = self.dataset
-
-            #minimum and maximum values of the dataset
-            min = minmax[0]
-            max = minmax[1]
+            #minimum and maximum values of the normalized dataset
+            self.min = minmax[0]
+            self.max = minmax[1]
 
             try:
-                #normalization function (sigmoid)
+                #normalization function : minmax
 
-                X_std = (X - X.min(axis=0)) / (X.max(axis=0) - X.min(axis=0))
+                self.min_dataset = self.dataset.min(axis=0)
+                self.max_dataset = self.dataset.max(axis=0)
+
+                self.dataset = (self.dataset - self.min_dataset) / (self.max_dataset - self.min_dataset)
 
                 #minmax normalization doesn't need pre-rescaled data
                 # it already rescales it after standardizing
-                X_scaled = X_std * (max - min) + min
+                self.dataset = self.dataset * (self.max - self.min) + self.min
 
-                self.dataset = X_scaled
                 return 0
 
             except:
@@ -128,6 +132,17 @@ class Dataset():
         else:
             return 4
 
+    def denormalize(self):
+
+        if self.min < self.max:
+
+            self.dataset = (self.dataset - self.min) / (self.max - self.min)
+
+            self.dataset = self.dataset * (self.max_dataset - self.min_dataset) + self.min_dataset
+
+            return 0
+
+        return 1
 
     def saveToFile(self,filepath = generateFilename(),outputWriteMode='wb+'):
 
@@ -137,10 +152,51 @@ class Dataset():
         try:
             f = file(filepath,outputWriteMode)
             np.save(f,self.dataset)
+            f.close()
             return 0
 
         except:
             return 1
+
+    def separate(self,filepathOut = generateFilename(description="NNoutput_x_t"), filepathIn = '', columns = [0,3], outputWriteMode = 'wb+'):
+
+        if type(columns) is not list:
+            return 2
+
+        if columns == []:
+            return 3
+
+        if filepathIn != '':
+            try:
+                newDataset = np.load(filepathIn)
+
+                if type(newDataset).__module__ != np.__name__:
+                    return 4
+
+            except:
+                return 5
+
+        else:
+            newDataset = self.dataset
+
+            if type(newDataset).__module__ != np.__name__:
+                return 6
+
+        if max(columns) > newDataset.shape[1]:
+            return 7
+
+        #choose which columns should be extracted and saved
+        newDataset = newDataset[:,columns]
+
+        try:
+            f = file(filepathOut,outputWriteMode)
+            np.save(f,newDataset)
+            f.close()
+            return 0
+
+        except:
+            return 1
+
 
 
 if __name__ =="__main__":
@@ -204,12 +260,70 @@ if __name__ =="__main__":
         if num == 2:
             dataset = Dataset()
             treat = dataset.extractDataset()
+            outputDataset = dataset.dataset
+            outputSourceDirectory = dataset.sourceDirectory
 
             normalized = dataset.normalize(normFunct='minmax')
             outputNormalized = dataset.dataset
 
+            denormalized = dataset.denormalize()
+            outputDenormalized = dataset.dataset
+
+            print "\nThis is a test to the class Dataset in module gain_dataset"
+
+            if treat == 0:
+                print "\nDataset collected from file %s" % outputSourceDirectory
+                print outputDataset
+
+            if treat == 1:
+                print "\nDataset not collected. Possibly due to a problem with the input file."
+                print "The directory of the .txt file with the TLE info is %s" % outputSourceDirectory
+
             if normalized == 0:
-                print "Normalized dataset (-1 to 1) with minmax: "
+                print "\nNormalized dataset (-1 to 1) with minmax: "
                 print  outputNormalized
 
-    test(2)
+            if normalized == 1:
+                print "\nError normalizing dataset."
+
+            if normalized == 2:
+                print '\nNo dataset to normalize!'
+
+            if normalized == 3:
+                print '\nDataset incompatible with normalization!'
+
+            if denormalized == 0:
+                print '\nDataset denormalized!'
+                print outputDenormalized
+
+            if denormalized == 1:
+                print '\nError denormalizing dataset!'
+
+        if num == 3:
+            dataset = Dataset()
+            treat = dataset.extractDataset()
+            outputDataset = dataset.dataset
+            outputSourceDirectory = dataset.sourceDirectory
+
+            separate = dataset.separate()
+            sepFile = generateFilename(description='NNoutput_x_t')
+            sepDataset = np.load(sepFile)
+
+            print "\nThis is a test to the class Dataset in module gain_dataset"
+
+            if treat == 0:
+                print "\nDataset collected from file %s" % outputSourceDirectory
+                print outputDataset
+
+            if treat == 1:
+                print "\nDataset not collected. Possibly due to a problem with the input file."
+                print "The directory of the .txt file with the TLE info is %s" % outputSourceDirectory
+
+            if separate == 0:
+                print '\nDataset separated to file : %s\n' %sepFile
+                print sepDataset
+
+            if separate != 0:
+                print '\nError separating dataset!'
+
+    test(3)
