@@ -1,3 +1,4 @@
 __author__ = 'Patrick'
-from Birds import Birds
-from PlotDataset import plotData
+from Birds import *
+from PlotDataset import *
+from goals import *
