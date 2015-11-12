@@ -401,10 +401,15 @@ def teach(version = 1, verbose = False):
         sepResultsZ = Dataset().separate(sepResultsFilepathZ,saveResultsPath,columnsZ_T)
 
         #Denormalize Results
+        outputFilePath = generateFilename(description='outputDataset')
+        minmaxValues = (-1,1)
         resultsData = Dataset()
         resultsData.dataset = NN1.results
-        outputDataset = np.load()
-        resultsData.min = np.load()
+        outputDataset = np.load(outputFilePath)
+        resultsData.min_dataset = outputDataset.min(axis=0)
+        resultsData.max_dataset = outputDataset.max(axis=0)
+        resultsData.min = minmaxValues[0]
+        resultsData.max = minmaxValues[1]
         denormResults = resultsData.denormalize()
 
         #Save Denormalized Results
