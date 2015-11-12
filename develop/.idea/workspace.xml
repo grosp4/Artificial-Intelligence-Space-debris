@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="74d5fe7a-8683-46fa-9157-0c3be85e2518" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pedro/gain_dataset.py" afterPath="$PROJECT_DIR$/Pedro/gain_dataset.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pedro/goals.py" afterPath="$PROJECT_DIR$/Pedro/goals.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Pedro/neuralNetwork.py" afterPath="$PROJECT_DIR$/Pedro/neuralNetwork.py" />
     </list>
     <ignored path="develop.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -38,8 +37,8 @@
       <file leaf-file-name="gain_dataset.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Pedro/gain_dataset.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-10.551724">
-              <caret line="170" column="30" selection-start-line="170" selection-start-column="30" selection-end-line="170" selection-end-column="30" />
+            <state vertical-scroll-proportion="-9.068966">
+              <caret line="192" column="28" selection-start-line="192" selection-start-column="28" selection-end-line="192" selection-end-column="28" />
               <folding>
                 <element signature="e#49#67#0" expanded="true" />
               </folding>
@@ -50,8 +49,8 @@
       <file leaf-file-name="neuralNetwork.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Pedro/neuralNetwork.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="72.75862">
-              <caret line="47" column="53" selection-start-line="47" selection-start-column="52" selection-end-line="47" selection-end-column="53" />
+            <state vertical-scroll-proportion="-0.5862069">
+              <caret line="198" column="0" selection-start-line="198" selection-start-column="0" selection-end-line="198" selection-end-column="0" />
               <folding>
                 <element signature="e#22#40#0" expanded="true" />
               </folding>
@@ -63,7 +62,7 @@
         <entry file="file://$PROJECT_DIR$/Patrick/PlotDataset.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="92" column="33" selection-start-line="92" selection-start-column="33" selection-end-line="92" selection-end-column="33" />
+              <caret line="118" column="0" selection-start-line="118" selection-start-column="0" selection-end-line="118" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -84,8 +83,8 @@
       <file leaf-file-name="goals.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Pedro/goals.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.036796536">
-              <caret line="181" column="0" selection-start-line="181" selection-start-column="0" selection-end-line="181" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.8160173">
+              <caret line="417" column="54" selection-start-line="417" selection-start-column="54" selection-end-line="417" selection-end-column="54" />
               <folding>
                 <element signature="e#22#54#0" expanded="true" />
               </folding>
@@ -118,9 +117,9 @@
         <option value="$PROJECT_DIR$/Pedro/__init__.py" />
         <option value="$PROJECT_DIR$/Pedro/filenameGenerator.py" />
         <option value="$PROJECT_DIR$/main.py" />
-        <option value="$PROJECT_DIR$/Pedro/neuralNetwork.py" />
         <option value="$PROJECT_DIR$/Patrick/PlotDataset.py" />
         <option value="$PROJECT_DIR$/Pedro/gain_dataset.py" />
+        <option value="$PROJECT_DIR$/Pedro/neuralNetwork.py" />
         <option value="$PROJECT_DIR$/Pedro/goals.py" />
       </list>
     </option>
@@ -826,6 +825,14 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Patrick/PlotDataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="118" column="0" selection-start-line="118" selection-start-column="0" selection-end-line="118" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -838,8 +845,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Pedro/gain_dataset.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-10.551724">
-          <caret line="170" column="30" selection-start-line="170" selection-start-column="30" selection-end-line="170" selection-end-column="30" />
+        <state vertical-scroll-proportion="-9.068966">
+          <caret line="192" column="28" selection-start-line="192" selection-start-column="28" selection-end-line="192" selection-end-column="28" />
           <folding>
             <element signature="e#49#67#0" expanded="true" />
           </folding>
@@ -848,26 +855,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Pedro/neuralNetwork.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="72.75862">
-          <caret line="47" column="53" selection-start-line="47" selection-start-column="52" selection-end-line="47" selection-end-column="53" />
+        <state vertical-scroll-proportion="-0.5862069">
+          <caret line="198" column="0" selection-start-line="198" selection-start-column="0" selection-end-line="198" selection-end-column="0" />
           <folding>
             <element signature="e#22#40#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Patrick/PlotDataset.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="92" column="33" selection-start-line="92" selection-start-column="33" selection-end-line="92" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Pedro/goals.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.036796536">
-          <caret line="181" column="0" selection-start-line="181" selection-start-column="0" selection-end-line="181" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.8160173">
+          <caret line="417" column="54" selection-start-line="417" selection-start-column="54" selection-end-line="417" selection-end-column="54" />
           <folding>
             <element signature="e#22#54#0" expanded="true" />
           </folding>
