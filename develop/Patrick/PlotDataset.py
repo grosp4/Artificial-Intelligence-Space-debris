@@ -36,7 +36,7 @@ import time as systemtime
 #  *     parameter:
 #  *
 #  *
-#  *                              - list_of_FilesToLoad   list of paths including filename, file has to be numpy matrix, max. 4 columns
+#  *                              - list_of_FilesToLoad   list of paths including filename, the file it points to can have up to 4 columns
 #  *                              => 2 dimensions -> x,y plotting
 #  *                              => 3 dimensions -> x,y,z plotting
 #  *                              => 4 dimensions -> x,y,z plotting in function of time  plotting
@@ -55,7 +55,8 @@ import time as systemtime
 #  *******************************************************************************/
 def plotData( list_of_FilesToLoad , list_of_x_AxesNames, list_of_y_AxesNames , list_of_z_AxesNames , list_of_TimeStepValues ):
     plt.close("all")
-
+    # initialize index
+    currentListElement = 0
 
     # check if the list filenames is bigger than zero and if all list have the same length
     if len(list_of_FilesToLoad) == 0        or( len(list_of_FilesToLoad)!= len(list_of_x_AxesNames)
@@ -71,13 +72,11 @@ def plotData( list_of_FilesToLoad , list_of_x_AxesNames, list_of_y_AxesNames , l
             #create figures and subplots
             fig_2d = plt.figure()
             plot2d= fig_2d.add_subplot(111)
+            plot3d = fig_2d.add_subplot(121, projection='3d')
 
             #prepare for 3D plot
-            fig_3d = plt.figure()
-            plot3d = fig_3d.add_subplot(111, projection='3d')
-
-            # initialize index
-            currentListElement = 0
+            #fig_3d = plt.figure()
+            #plot3d = fig_3d.add_subplot(111, projection='3d')
 
             # print as long as we have elements in our list
             while currentListElement <len(list_of_FilesToLoad) :
@@ -128,7 +127,7 @@ def plotData( list_of_FilesToLoad , list_of_x_AxesNames, list_of_y_AxesNames , l
                                                     plt.draw()
                                                     systemtime.sleep(list_of_TimeStepValues[currentListElement])
 
-                                    plt.close(fig_3d)
+                                    #plt.close(fig_3d)
                             # 3 dimensional -> x,y,z
                             elif dataset_size[1] == 3:
 
@@ -165,7 +164,7 @@ def plotData( list_of_FilesToLoad , list_of_x_AxesNames, list_of_y_AxesNames , l
                                                     plt.draw()
                                                     systemtime.sleep(list_of_TimeStepValues[currentListElement])
 
-                                    plt.close(fig_2d)
+                                    #plt.close(fig_2d)
                             # 4 dimensional -> x,y,z and a t axis
                             elif dataset_size[1] == 4:
 
@@ -201,7 +200,7 @@ def plotData( list_of_FilesToLoad , list_of_x_AxesNames, list_of_y_AxesNames , l
                                                     plot3d.scatter(data_x_axes[time], data_y_axes[time], data_z_axes[time], c='r', marker='o')
                                                     plt.draw()
                                                     systemtime.sleep(list_of_TimeStepValues[currentListElement])
-                                    plt.close(fig_2d)
+                                    #plt.close(fig_2d)
 
 
                             else:
