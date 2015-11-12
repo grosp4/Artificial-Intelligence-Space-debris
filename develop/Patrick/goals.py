@@ -30,8 +30,8 @@ def plotData (debug = 0 ):
 
     desired_data_output_x_t =[pedro.generateFilename("","outputDataset_x_t",".npy",True)]
     x_names =["X", "X","X"]
-    y_names =["y", "y","X"]
-    z_names =["z", "z","X"]
+    y_names =["y", "y","y"]
+    z_names =["z", "z","z"]
     t_names =[0,0,0]
 
 
@@ -42,7 +42,7 @@ def plotData (debug = 0 ):
 
 
     list_of_elements = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_x_t_20151112.npy"]
-    PlotDataset.plotData(compareDesiredAndTrainedData_x_t,x_names,y_names, z_names,t_names)
+    PlotDataset.plotData(compareDesiredAndTrainedData_x_t, x_names, y_names, z_names,t_names,0)
     #PlotDataset.plotData(compareDesiredAndTrainedData_3D, x_names, y_names, z_names, t_names)
 
 

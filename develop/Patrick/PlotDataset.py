@@ -47,13 +47,14 @@ import time as systemtime
 #  *                              - list_of_z_AxesNames     list of names of the z axes, has to be the same length as all other parameters
 #  *                              - list_of_timeStepValues  list of time steps in seconds for plotting, default = 0, meaning no time stepped plotting, recommended values 0.00001 < time_step < 0.01
 #  *                                                        has to be the same length as all other parameters
+#  *                              - plotmode                define the plotmode: 0= only 3D or 2D, 1 = combine 2D and 3D plot
 #  *     returns:                 0
 #  *     description:             by passing an array / list of data you can create several drawings in one plot.
 #  *                              Keep in mind: indexes have to be equal for the same "draw" of a plot.
 #  *
 #  *
 #  *******************************************************************************/
-def plotData( list_of_FilesToLoad , list_of_x_AxesNames, list_of_y_AxesNames , list_of_z_AxesNames , list_of_TimeStepValues ):
+def plotData( list_of_FilesToLoad , list_of_x_AxesNames, list_of_y_AxesNames , list_of_z_AxesNames , list_of_TimeStepValues, plotmode ):
     plt.close("all")
     # initialize index
     currentListElement = 0

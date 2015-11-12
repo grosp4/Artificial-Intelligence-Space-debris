@@ -75,7 +75,9 @@ class Layer():
         y_adjustment = neuron_radius
 
         #draw the line between two neurons
-        line = pyplot.Line2D((neuron1.x , neuron2.x ), (neuron1.y - y_adjustment , neuron2.y + y_adjustment))
+        line = pyplot.Line2D((neuron1.x , neuron2.x ), (neuron1.y - y_adjustment , neuron2.y + y_adjustment), )
+
+        #add the line to our plot
         pyplot.gca().add_line(line)
 
     def draw(self):
@@ -87,13 +89,17 @@ class Layer():
 
 
 class NeuralNetwork():
+
+    #constructor
     def __init__(self):
         self.layers = []
 
+    # add a new layer of neurons
     def add_layer(self, number_of_neurons):
         layer = Layer(self, number_of_neurons)
         self.layers.append(layer)
 
+    # draw the network
     def draw(self):
         for layer in self.layers:
             layer.draw()
