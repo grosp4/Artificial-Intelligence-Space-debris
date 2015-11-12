@@ -118,7 +118,7 @@ class NN():
 
         return 1
 
-    def teachPyBrain(self,epochs=60,hiddenLayers=4,verbose=False):
+    def teachPyBrain(self,epochs=5,hiddenLayers=4,verbose=False):
         from pybrain.datasets import SupervisedDataSet
         from pybrain.supervised.trainers import BackpropTrainer
         from pybrain.tools.shortcuts import buildNetwork
@@ -206,6 +206,13 @@ class NN():
         except:
             return 1
 
+    def getWeights(self):
+        for mod in self.net.modules:
+            for conn in self.net.connections[mod]:
+                print conn
+                #for cc in range(len(conn.params)):
+                    #print conn.whichBuffers(cc), conn.params[cc]
+
 if __name__ == "__main__":
 
     def test(number = 1):
@@ -216,22 +223,14 @@ if __name__ == "__main__":
 
             NN1 = NN()
 
-            inputFilePath = generateFilename(description='minmaxinputDataset')
-            outputFilePath = generateFilename(description='minmaxoutputDataset')
+            inputFilePath = generateFilename(description='normInputDataset')
+            outputFilePath = generateFilename(description='normOutputDataset')
 
             loadData = NN1.loadData(inputFilePath,outputFilePath)
 
-            print NN1.inputDataset
+            NN1.teachPyBrain(verbose=False)
 
-            #print "Input dataset: "
-            #print NN1.inputDataset
-
-            #print "Output dataset: "
-            #print NN1.outputDataset
-
-            #teaching = NN1.teach()
-
-            NN1.teachPyBrain(verbose=True)
+            NN1.getWeights()
 
 
             #print str(np.mean(np.abs(NN1.l2_error)))

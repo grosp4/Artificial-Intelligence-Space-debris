@@ -297,7 +297,7 @@ if __name__ =="__main__":
                 print '\nDataset denormalized!'
                 print outputDenormalized
 
-            if denormalized == 1:
+            if denormalized != 0:
                 print '\nError denormalizing dataset!'
 
         if num == 3:
@@ -327,4 +327,4 @@ if __name__ =="__main__":
             if separate != 0:
                 print '\nError separating dataset!'
 
-    test(3)
+    test(2)
