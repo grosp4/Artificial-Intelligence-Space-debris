@@ -18,7 +18,6 @@ from Pedro import *
 #  *******************************************************************************/
 def plotData (debug = 0 ):
 
-
     # generate list of elements to compare calculation and training
     #right now these values are freely choosen, to check if everything works
     compareDesiredAndTrainedData_x_t=[pedro.generateFilename("","outputDataset_x_t",".npy",True), pedro.generateFilename("","outputDataset_y_t",".npy",True), pedro.generateFilename("","inputDataset",".npy",True)]
@@ -41,11 +40,11 @@ def plotData (debug = 0 ):
     outputFileNameX = pedro.generateFilename("","inputDataset_x_t",".npy",True)
 
 
-    list_of_elements = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_x_t_20151112.npy"]
+    list_of_elements = [pedro.generateFilename("","inputDataset_x_t",".npy",True)]
     PlotDataset.plotData(compareDesiredAndTrainedData_x_t, x_names, y_names, z_names,t_names,0)
     #PlotDataset.plotData(compareDesiredAndTrainedData_3D, x_names, y_names, z_names, t_names)
 
-
+    PlotDataset.plotData(compareDesiredAndTrainedData_x_t, x_names, y_names, z_names,t_names,0)
 
 
 
