@@ -24,23 +24,26 @@ __author__ = 'Patrick'
 #  *
 #  ******************************************************************************/
 from matplotlib import pyplot
-from math import cos, sin, atan
 
 
 
 
 
 class Neuron():
+
+    # constructor of neuron
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
+    #drawing of the neuron
     def draw(self):
         circle = pyplot.Circle((self.x, self.y), radius=neuron_radius, fill=False)
         pyplot.gca().add_patch(circle)
 
 
 class Layer():
+
     def __init__(self, network, number_of_neurons):
         self.previous_layer = self.__get_previous_layer(network)
         self.y = self.__calculate_layer_y_position()
@@ -112,8 +115,11 @@ if __name__ == "__main__":
     neuron_radius = 0.5
     number_of_neurons_in_widest_layer = 4
     network = NeuralNetwork()
-    network.add_layer(3)
-    network.add_layer(10)
-    network.add_layer(2)
+    network.add_layer(4)
+    network.add_layer(4)
+    network.add_layer(4)
+    network.add_layer(4)
+    network.add_layer(4)
+    network.add_layer(4)
     network.draw()
 
