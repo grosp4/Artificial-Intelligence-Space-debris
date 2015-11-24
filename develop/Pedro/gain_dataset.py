@@ -118,6 +118,15 @@ class Dataset():
                 self.min_dataset = self.dataset.min(axis=0)
                 self.max_dataset = self.dataset.max(axis=0)
 
+                print "self.dataset:"
+                print self.dataset
+
+                print "self.min_dataset:"
+                print self.min_dataset
+
+                print "self.max_dataset:"
+                print self.max_dataset
+
                 self.dataset = (self.dataset - self.min_dataset) / (self.max_dataset - self.min_dataset)
 
                 #minmax normalization doesn't need pre-rescaled data
@@ -328,3 +337,10 @@ if __name__ =="__main__":
                 print '\nError separating dataset!'
 
     test(2)
+
+    """bar = Bar('Processing', max=20)
+        for i in range(20):
+        sleep(1)
+    # Do some work
+    bar.next()
+bar.finish()"""

@@ -1,3 +1,4 @@
 *.iml
 develop/.idea/misc.xml
 *.xml
+*.pyc
