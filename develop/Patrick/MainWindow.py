@@ -56,10 +56,10 @@ class baseWindow:
 
             # Buttons creation starts here
             self.Button_Training = gtk.Button("Train me")
-            self.Button_Training.connect("clicked", self.testfunc)
+            self.Button_Training.connect("clicked", self.plot)
 
             self.Button_PlotData = gtk.Button("Plot Data ")
-            self.Button_PlotData.connect("clicked", self.testfunc)
+            self.Button_PlotData.connect("clicked", self.plot)
 
             self.Button_Exit = gtk.Button("Exit")
             self.Button_Exit.connect("clicked", self.destroyOurWindow)
