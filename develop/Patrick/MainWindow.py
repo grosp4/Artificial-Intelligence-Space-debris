@@ -7,10 +7,6 @@ from matplotlib.backends.backend_gtkagg import FigureCanvasGTKAgg as FigureCanva
 #  *  local variables
 #  ******************************************************************************/
 pathname = '\dataset'   # pathname to get to a specific folder
-printInNewPlot = 0      # 0 = no new plot, using old one
-plotmode = 0            # 0 = 2D mode, 1 = 3D Mode
-dataset = ["None", "None"]
-
 # /******************************************************************************/
 # /** \file          Class baseWindow
 #  *  \brief         TBD
@@ -39,6 +35,13 @@ class baseWindow:
 
 #******************************************************************************/
 # /*
+#  *     class attributes:  @ printInNewPlot, 0 = no new plot, using old one
+#  *                        @ plotmode, 0 = 2D mode, 1 = 3D Mode
+#*******************************************************************************/
+    printInNewPlot = 0      # 0 = no new plot, using old one
+    plotmode = 0            # 0 = 2D mode, 1 = 3D Mode
+#******************************************************************************/
+# /*
 #  *     functionname:          @ __init__
 #  *     parameter:             @
 #  *     returns:               @
@@ -46,6 +49,7 @@ class baseWindow:
 #  *
 #  *
 #*******************************************************************************/
+
     def __init__(self):
 
             # setting windows properties starts here
@@ -155,20 +159,11 @@ class baseWindow:
             self.box_container_vertical_left.pack_start(self.combo_between_2D_and_3D_Plot,expand=False, fill=False, padding=False)
             self.combo_between_2D_and_3D_Plot.set_size_request(200, 40)
 
-            #self.box_container_vertical_left.pack_start(self.label_distance_3,expand=False, fill=False, padding=False)
-            #self.label_distance_3.set_size_request(200, distance_label_value)
-
             self.box_container_vertical_left.pack_start(self.combo_dataset_one,expand=True, fill=False, padding=False)
             self.combo_dataset_one.set_size_request(200, 40)
 
-            #self.box_container_vertical_left.pack_start(self.label_distance_4,expand=True, fill=False, padding=False)
-            #self.label_distance_4.set_size_request(200, distance_label_value)
-
             self.box_container_vertical_left.pack_start(self.combo_dataset_two,expand=True, fill=False, padding=False)
             self.combo_dataset_two.set_size_request(200, 40)
-
-            #self.box_container_vertical_left.pack_start(self.label_distance_5,expand=True, fill=False, padding=False)
-            #self.label_distance_4.set_size_request(200, distance_label_value)
 
             self.box_container_vertical_left.pack_start(self.entry_X,expand=True, fill=False, padding=False)
             self.entry_X.set_size_request(200, 40)
@@ -227,7 +222,7 @@ class baseWindow:
 #  *
 #  *
 #  *******************************************************************************/
-    def plot(self,widget):
+    def plot(self, widget):
             if Patrick.debug:
                 print "entering plotmode"
             self.label_status.set_text(widget.get_label())
@@ -268,22 +263,20 @@ class baseWindow:
 #  *
 #  *
 #  *******************************************************************************/
-    def changeOfNewPlot(self, widget, data = None):
-            global printInNewPlot
+    def changeOfNewPlot(self, widget, data=None):
 
-            if printInNewPlot:
-                printInNewPlot = False
+            if self.printInNewPlot:
+                self.printInNewPlot = False
                 self.label_warning.hide()
                 self.label_distance_2.show()
 
             else:
-                printInNewPlot = True
+                self.printInNewPlot = True
                 self.label_warning.show()
                 self.label_distance_2.hide()
 
             if Patrick.debug:
-                print "%s was toggled %s" % (data, ("OFF", "ON")[widget.get_active()])
-                print printInNewPlot
+                print self.printInNewPlot
 
 
 #  ******************************************************************************/
@@ -296,13 +289,13 @@ class baseWindow:
 #  *
 #  *******************************************************************************/
     def getPlotmode(self, widget):
-            global plotmode
+
             text = widget.get_active_text()
-            self.label_status.set_text(" %s plotmode choosen" % text)
-            if text =="2D Plot":
-                plotmode = 0
+            self.label_status.set_text(" %s self.plotmode choosen" % text)
+            if text == "2D Plot":
+                self.plotmode = 0
             else:
-                plotmode = 1
+                self.plotmode = 1
 
             if Patrick.debug:
                 print("Selected: %s " % text)
@@ -317,15 +310,14 @@ class baseWindow:
 #  *
 #  *
 #  *******************************************************************************/
-    def getDatasetOneToPlot(self,widget):
-            global dataset
+    def getDatasetOneToPlot(self, widget):
             temp = r"\\"
             temp = Patrick.getDatasetPath(pathname) +temp
-            dataset[0] = temp + widget.get_active_text()
-            self.label_status.set_text("%s choosen" % dataset[0])
+            Patrick.datasetForPlot[0] = temp + widget.get_active_text()
+            self.label_status.set_text("%s chosen" % Patrick.datasetForPlot[0])
 
             if Patrick.debug:
-                print("Selected: %s " % dataset[0])
+                print("Selected: %s " % Patrick.datasetForPlot[0])
 
 
 #  ******************************************************************************/
@@ -337,15 +329,14 @@ class baseWindow:
 #  *
 #  *
 #  *******************************************************************************/
-    def getDatasetTwoToPlot(self,widget):
-            global dataset
+    def getDatasetTwoToPlot(self, widget):
             temp = r"\\"
             temp = Patrick.getDatasetPath(pathname) +temp
-            dataset[1] = temp + widget.get_active_text()
-            self.label_status.set_text("%s choosen" % dataset[1])
+            Patrick.datasetForPlot[1] = temp + widget.get_active_text()
+            self.label_status.set_text("%s chosen" % Patrick.datasetForPlot[1])
 
             if Patrick.debug:
-                print("Selected: %s " % dataset[1])
+                print("Selected: %s " % Patrick.datasetForPlot[1])
 
 
 #  ******************************************************************************/
@@ -359,7 +350,7 @@ class baseWindow:
 #  *******************************************************************************/
     def callPlotFunctions(self,widget):
 
-        Patrick.plotData(dataset, self.entry_X.get_text(), self.entry_Y.get_text(), self.entry_Z.get_text(), self.entry_T.get_text(), plotmode, printInNewPlot)
+        Patrick.plotData(Patrick.datasetForPlot, self.entry_X.get_text(), self.entry_Y.get_text(), self.entry_Z.get_text(), self.entry_T.get_text(), self.plotmode, self.printInNewPlot)
 
 
 

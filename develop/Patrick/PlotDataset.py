@@ -271,7 +271,6 @@ if __name__ == "__main__":
 
         #version 6: without parameters
         if version == 6:
-
                 plotData()
 
 
