@@ -1,4 +1,7 @@
 __author__ = 'Pedro'
 # add here your classes
-from gain_dataset import Dataset
-from filenameGenerator import generateFilename
+import filenameGenerator
+import gain_dataset
+import neuralNetwork
+from goals import collectDataset
+from goals import teach

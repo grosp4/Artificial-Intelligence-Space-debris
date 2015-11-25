@@ -778,7 +778,40 @@ if __name__ == "__main__":
             teachNN = teach(version=3,verbose=verbose)
 
         if number == 4:
-            collect = collectDataset(version=3,verbose=verbose)
-            teachNN = teach(version=4,verbose=verbose)
+            #collect = collectDataset(version=4,verbose=verbose)
+            #teachNN = teach(version=3,verbose=verbose)
+
+            inputDataFilepath = generateFilename(description = "stations", extension = ".txt", dateToday = False)
+            fp = open(inputDataFilepath)
+            listOfSatellites = []
+
+            for i, line in enumerate(fp):
+                if i%3 == 0:
+                    listOfSatellites.append(line.strip())
+
+            listOfFiles = []
+
+            dictOfDescriptions = {"inputDataset":["x","y","z","t"],
+                                  "normInputDataset":["x","y","z","t"],
+                                  "outputDataset":["x","y","z","t"],
+                                  "normOutputDataset":["x","y","z","t"],
+                                  }
+
+            x_descruptions = []
+            y_descruptions = []
+            z_descruptions = []
+            t_descruptions = []
+            list_of_timestep_values = []
+
+            for satellite in listOfSatellites:
+                for description in dictOfDescriptions:
+                    listOfFiles.append(generateFilename(description = description + satellite))
+                    x_descruptions.append(dictOfDescriptions[description][0])
+                    y_descruptions.append(dictOfDescriptions[description][1])
+                    z_descruptions.append(dictOfDescriptions[description][2])
+                    t_descruptions.append(dictOfDescriptions[description][3])
+                    list_of_timestep_values.append(0)
+
+            PlotDataset.plotData(listOfFiles,x_descruptions,y_descruptions,z_descruptions,list_of_timestep_values,0)
 
     test(4)
