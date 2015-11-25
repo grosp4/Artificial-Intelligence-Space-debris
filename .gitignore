@@ -1,4 +1,15 @@
+<<<<<<< HEAD
 *.xml
 *.xml
 *.iml
 develop/.idea/workspace.xml
+=======
+*.iml
+develop/.idea/misc.xml
+*.xml
+*.pyc
+*.xml
+>>>>>>> origin/master
+*.pyc
+*.xml
+develop/Patrick/MainWindow.pyc

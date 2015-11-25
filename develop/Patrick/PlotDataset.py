@@ -25,214 +25,249 @@ __author__ = 'Patrick'
 
 
 import matplotlib.pyplot as plt
-import Pedro as pedro
-from mpl_toolkits.mplot3d import Axes3D
 import numpy as numblibrary
-import time as systemtime
+
 
 #  ******************************************************************************/
 # /*
-#  *     functionname:          plotDataset
+#  *     functionname:          @ plotData
 #  *     parameter:
+#  *     :             @ list_of_FilesToLoad, amount of plots you want to plot into ONE plot!
+#  *     :             @ list_of_x_AxesName, z axes name
+#  *     :             @ list_of_y_AxesName, y axes name
+#  *     :             @ list_of_z_AxesName, z axes name
+#  *     :             @ plotmode, 0 = 2D mode, 1 = 3D Mode
+#  *     :             @ newplot , 0 = no new plots, you will plot into the old plot
 #  *
-#  *
-#  *                              - list_of_FilesToLoad   list of paths including filename, the file it points to can have up to 4 columns
-#  *                              => 2 dimensions -> x,y plotting
-#  *                              => 3 dimensions -> x,y,z plotting
-#  *                              => 4 dimensions -> x,y,z plotting in function of time  plotting
-#  *                                has to be the same length as all other parameters
-#  *
-#  *                              - list_of_x_AxesNames     list of names of the x axes, has to be the same length as all other parameters
-#  *                              - list_of_y_AxesNames     list of names of the y axes, has to be the same length as all other parameters
-#  *                              - list_of_z_AxesNames     list of names of the z axes, has to be the same length as all other parameters
-#  *                              - list_of_timeStepValues  list of time steps in seconds for plotting, default = 0, meaning no time stepped plotting, recommended values 0.00001 < time_step < 0.01
-#  *                                                        has to be the same length as all other parameters
-#  *                              - plotmode                define the plotmode: 0= only 3D or 2D, 1 = combine 2D and 3D plot
-#  *     returns:                 0
-#  *     description:             by passing an array / list of data you can create several drawings in one plot.
-#  *                              Keep in mind: indexes have to be equal for the same "draw" of a plot.
+#  *     returns:               @ 0, or and error message in console
+#  *     description:           @ creates 2D or 3D plots on given data
 #  *
 #  *
 #  *******************************************************************************/
-def plotData( list_of_FilesToLoad , list_of_x_AxesNames, list_of_y_AxesNames , list_of_z_AxesNames , list_of_TimeStepValues, plotmode ):
-    plt.close("all")
+#  *
+#  *
+#  *******************************************************************************/
+def plotData( list_of_FilesToLoad = None, list_of_x_AxesName = "x Axes", list_of_y_AxesName = "Y Axes" , list_of_z_AxesName = "Z Axes" , list_of_t_AxesName = "time axes", plotmode = 0, newPlot = 0 ):
     # initialize index
+
     currentListElement = 0
+    # check if the list of filenames has an entry
+    if list_of_FilesToLoad == None :
+            print("Error in PlotDataset, no files supplied, please provide at least one [;,2] numpy matrix file! \n")
+            error = 1
 
-    # check if the list filenames is bigger than zero and if all list have the same length
-    if len(list_of_FilesToLoad) == 0        or( len(list_of_FilesToLoad)!= len(list_of_x_AxesNames)
-                                            and len(list_of_FilesToLoad)!= len(list_of_y_AxesNames)
-                                            and len(list_of_FilesToLoad)!= len(list_of_z_AxesNames)
-                                            and len(list_of_FilesToLoad)!= len(list_of_TimeStepValues)
-                                            ):
-
-            print("Error in PlotDataset, no filename(s) specified or given parameters have different list length, please check your parameters\n")
-
+    # if we have entries we will plot them
     else:
+            error = 0
+            #if we want new plots, we close all old ones
+            if newPlot == 1:
+                    plt.close("all")
 
-            #create figures and subplots
-            fig_2d = plt.figure()
-            plot2d= fig_2d.add_subplot(111)
-            plot3d = fig_2d.add_subplot(121, projection='3d')
-
-            #prepare for 3D plot
-            #fig_3d = plt.figure()
-            #plot3d = fig_3d.add_subplot(111, projection='3d')
+            figure = plt.figure()
 
             # print as long as we have elements in our list
             while currentListElement <len(list_of_FilesToLoad) :
-
                     dataset = numblibrary.load(list_of_FilesToLoad[currentListElement])
 
-
                     # check if all values in dataset are zero
-                    if  numblibrary.all(dataset == 0):
+                    if numblibrary.all(dataset == 0):
                             print("Error in PlotDataset, contains invalid data \n")
                             print('Pathname in PlotData path is: %S \n', list_of_FilesToLoad[currentListElement])
+                            error = 1
+                            break
 
                     # if dataset contains values, we have a valid file, if not abort
                     else:
                             #  decide wether the matrix is 1, 2, 3, 4 dimensional -> specify plot
                             dataset_size = dataset.shape
+                            if debug:
+                                    print (dataset_size[1], currentListElement)
 
-                            print (dataset_size)
+                            # for multiplotting, change color
+                            if currentListElement == 0:
+                                    symbolInPlot = 'r*'
+
+                            elif currentListElement == 1:
+                                    symbolInPlot = 'c.'
+
+                            elif currentListElement == 2:
+                                    symbolInPlot = 'b.'
+
+                            else:
+                                    symbolInPlot = 's*'
+
                             # 2 dimensional -> x,y
                             if dataset_size[1] == 2:
 
-                                    data_x_axes = dataset[:,0]
-                                    data_y_axes = dataset[:,1]
+                                    if plotmode == 0:
+                                            plot2d= figure.add_subplot(111)
+                                            data_x_axes = dataset[:, 0]
+                                            data_y_axes = dataset[:, 1]
 
-                                    #Draw 2 dim diagram
-                                    plt.xlabel(list_of_x_AxesNames[currentListElement])
-                                    plt.ylabel(list_of_y_AxesNames[currentListElement])
+                                            #Draw 2 dim diagram
+                                            plt.xlabel(list_of_x_AxesName)
+                                            plt.ylabel(list_of_y_AxesName)
 
+                                            plot2d.plot(data_y_axes,data_x_axes, symbolInPlot, label="Output Dataset")
 
-                                    # if we dont have a time step for plotting, we just plot the result
-                                    if list_of_TimeStepValues[currentListElement] == 0:
-                                             if currentListElement == 0:
-                                                        plot2d.plot(data_y_axes,data_x_axes, 'r*')
-                                             elif currentListElement == 1:
-                                                        plot2d.plot(data_y_axes,data_x_axes, 'gs')
-                                             elif currentListElement == 2:
-                                                        plot2d.plot(data_y_axes,data_x_axes, 'b.')
-                                             elif currentListElement <= 3:
-                                                        plot2d.plot(data_y_axes,data_x_axes, 'm.')
+                                    #refuse 3D Plot
+                                    if plotmode == 1:
+                                            print("This function can not plot 2D Data (x,t) in 3D \n")
+                                            error = 1
+                                            break
 
-
-                                    else:
-                                            plt.ion()
-                                            plt.show()
-
-                                            for time in range (dataset_size[0]):
-                                                    plt.plot(data_y_axes,data_x_axes, '-ro')
-                                                    plt.draw()
-                                                    systemtime.sleep(list_of_TimeStepValues[currentListElement])
-
-                                    #plt.close(fig_3d)
-                            # 3 dimensional -> x,y,z
+                            # 3 dimensional -> x,y,t
                             elif dataset_size[1] == 3:
+                                    #generate two subplots for x to z and y to z correlation
+                                    if plotmode == 0:
+                                            plot2d_x= figure.add_subplot(111)
+                                            plot2d_y= figure.add_subplot(121)
+                                            data_x_axes = dataset[:, 0]
+                                            data_y_axes = dataset[:, 1]
+                                            data_z_axes = dataset[:, 2]
 
-                                    data_x_axes = dataset[:,0]
-                                    data_y_axes = dataset[:,1]
-                                    data_z_axes = dataset[:,2]
+                                            #Draw 2 dim diagram
+                                            plt.xlabel(list_of_x_AxesName)
+                                            plt.ylabel(list_of_y_AxesName)
 
-                                    #print 3 dimensional plot
-                                    fig_3d = plt.figure()
-                                    plot3d = fig_3d.add_subplot(111, projection='3d')
-                                    plot3d.set_xlabel(list_of_x_AxesNames[currentListElement])
-                                    plot3d.set_ylabel(list_of_y_AxesNames[currentListElement])
-                                    plot3d.set_zlabel(list_of_z_AxesNames[currentListElement])
+                                            plot2d_x.plot(data_z_axes, data_x_axes, symbolInPlot, label=" to TBD")
+                                            plot2d_y.plot(data_z_axes, data_y_axes, symbolInPlot, label=" to TBD")
 
-                                    # if we dont have a time step for plotting, we just plot the result
-                                    if list_of_TimeStepValues[currentListElement] == 0:
-                                            #print 3 dimensional plot
+                                    #refuse 3D Plot
+                                    if plotmode == 1:
+                                            print("This function can not plot 2D Data (x,y,t) in 3D \n")
+                                            error = 1
+                                            break
 
-                                            if currentListElement == 0:
-                                                         plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='r', marker='o')
-                                            elif currentListElement == 1:
-                                                         plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='g', marker='*')
-                                            elif currentListElement == 2:
-                                                         plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='m', marker='x')
-                                            elif currentListElement <= 3:
-                                                         plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='b', marker='.')
-
-                                    else:
-                                            plt.ion()
-                                            plt.show()
-
-                                            for time in range (dataset_size[0]):
-                                                    plot3d.scatter(data_x_axes[time], data_y_axes[time], data_z_axes[time], c='r', marker='o')
-                                                    plt.draw()
-                                                    systemtime.sleep(list_of_TimeStepValues[currentListElement])
-
-                                    #plt.close(fig_2d)
-                            # 4 dimensional -> x,y,z and a t axis
+                            # 3 dimensional -> x,y,z,t, plotting without time function (time is indizes of length of elements)
                             elif dataset_size[1] == 4:
 
-                                    data_x_axes = dataset[:,0]
-                                    data_y_axes = dataset[:,1]
-                                    data_z_axes = dataset[:,2]
-                                    data_t_axes = dataset[:,3]
+                                    data_x_axes = dataset[:, 0]
+                                    data_y_axes = dataset[:, 1]
+                                    data_z_axes = dataset[:, 2]
+                                    data_t_axes = dataset[:, 3]
 
-                                    #print 3 dimensional plot
-                                    plot3d.set_xlabel(list_of_x_AxesNames[currentListElement])
-                                    plot3d.set_ylabel(list_of_y_AxesNames[currentListElement])
-                                    plot3d.set_zlabel(list_of_z_AxesNames[currentListElement])
+                                    #generate two subplots for x to z and y to z correlation
+                                    if plotmode == 0:
+                                            if debug:
+                                                    print "2D Mode active"
 
-                                    # if we dont have a time step for plotting, we just plot the result
-                                    if list_of_TimeStepValues[currentListElement] == 0:
+                                            plot2d_x= figure.add_subplot(311)
+                                            plot2d_y= figure.add_subplot(312)
+                                            plot2d_z= figure.add_subplot(313)
+                                            plt.tight_layout()
 
-                                            #print 3 dimensional plot
-                                            print("no timestep!\n")
-                                            if currentListElement == 0:
-                                                         plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='r', marker='o')
-                                            elif currentListElement == 1:
-                                                         plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='g', marker='*')
-                                            elif currentListElement == 2:
-                                                         plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='m', marker='x')
-                                            elif currentListElement <= 3:
-                                                         plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='b', marker='.')
+                                            #Draw 2 dim diagram
+                                            plot2d_x.set_ylabel(list_of_x_AxesName)
+                                            plot2d_y.set_ylabel(list_of_y_AxesName)
+                                            plot2d_z.set_ylabel(list_of_z_AxesName)
+                                            plt.xlabel(list_of_t_AxesName)
 
+                                            plot2d_x.plot(data_t_axes, data_x_axes, symbolInPlot, label=" to TBD")
+                                            plot2d_y.plot(data_t_axes, data_y_axes, symbolInPlot, label=" to TBD")
+                                            plot2d_z.plot(data_t_axes, data_z_axes, symbolInPlot, label=" to TBD")
+
+                                    #if 3D has been requested
                                     else:
-                                            plt.ion()
-                                            plt.show()
+                                            if debug:
+                                                    print "3D Mode active"
 
-                                            for time in range (dataset_size[0]):
-                                                    plot3d.scatter(data_x_axes[time], data_y_axes[time], data_z_axes[time], c='r', marker='o')
-                                                    plt.draw()
-                                                    systemtime.sleep(list_of_TimeStepValues[currentListElement])
-                                    #plt.close(fig_2d)
-
-
-                            else:
-                                print("Debug: This file contains more than 4 dimensions and therefore it can not be drawn, Error in: %S \n", file_to_load)
-                    #increase loop counter
+                                            plot3d =figure.add_subplot(111, projection='3d')
+                                            plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c= 'r', marker='o')
+                                            plot3d.set_ylabel(list_of_x_AxesName)
+                                            plot3d.set_ylabel(list_of_y_AxesName)
+                                            plot3d.set_ylabel(list_of_z_AxesName)
                     currentListElement+= 1
-            # if time was zero, we print all graphics in one plot
 
-    if list_of_TimeStepValues[currentListElement-1] == 0:
-            plt.show()
-
+            if error == 0:
+                    plt.show()
+            plt.legend("")
 
     return 0
 
-
+# DEBUG MAIN #
 if __name__ == "__main__":
 
-        TESTlist_of_FilesToLoad = [ [1,2,3,4] ,[1,2,3,4], [1,2,3,4], [1,2,3,4] ]
-        fil_for_function = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_20151112.npy",
-                            r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_20151112.npy",
-                            r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_20151112.npy",
-                            r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_20151112.npy"
-                            ]
-        TESTlist_of_x_AxesNames = [ "Xasdf" ,"Xasdf", "Xasdf", "Xasdf" ]
-        TESTlist_of_y_AxesNames = [ "Yasdf" ,"Yasdf", "Yasdf", "Yasdf" ]
-        TESTlist_of_z_AxesNames = [ "Zasdf" ,"Zasdf", "Zasdf", "Zasdf" ]
-        TESTlist_of_TimeStepValues = [0 , 0, 0, 0]
+        # debug variables
+        debug = 1
+        version = 3
 
-        dataset_1 = numblibrary.load(fil_for_function[0])
-        dataset_2 = numblibrary.load(fil_for_function[1])
-        dataset_3 = numblibrary.load(fil_for_function[2])
-        dataset_4 = numblibrary.load(fil_for_function[3])
+        #version 1: 2D Tests  without new plot, 2 times max, 2Dim x,t only
+        if version == 1:
+                newplot = 0
+                plotmode = 0
 
-        plotData( fil_for_function , TESTlist_of_x_AxesNames, TESTlist_of_y_AxesNames , TESTlist_of_z_AxesNames , TESTlist_of_TimeStepValues )
+                TESTlist_of_x_AxesNames = [ "Xasdf" ]
+                TESTlist_of_y_AxesNames = [ "Yasdf" ]
+                TESTlist_of_z_AxesNames = [ "Zasdf" ]
+                TESTlist_of_t_AxesNames = [ "Tasdf" ]
+
+                file_2D_for_function = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_x_t_20151112.npy",r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_y_t_20151112.npy"]
+                plotData( file_2D_for_function , TESTlist_of_x_AxesNames, TESTlist_of_y_AxesNames , TESTlist_of_z_AxesNames , TESTlist_of_t_AxesNames, plotmode, newplot )
+
+                file_2D_for_function = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_x_t_20151112.npy",r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_y_t_20151112.npy"]
+                plotData( file_2D_for_function , TESTlist_of_x_AxesNames, TESTlist_of_y_AxesNames , TESTlist_of_z_AxesNames ,TESTlist_of_t_AxesNames, plotmode, newplot )
+
+
+        #version 2: 2D Tests  new plot, 1 times max, 3 Dim x,y,z,t
+        if version == 2:
+                newplot = 0
+                plotmode = 0
+
+                TESTlist_of_x_AxesNames = [ "Xasdf" ]
+                TESTlist_of_y_AxesNames = [ "Yasdf" ]
+                TESTlist_of_z_AxesNames = [ "Zasdf" ]
+                TESTlist_of_t_AxesNames = [ "Tasdf" ]
+
+                file_2D_for_function = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_20151112.npy",]
+                plotData( file_2D_for_function , TESTlist_of_x_AxesNames, TESTlist_of_y_AxesNames , TESTlist_of_z_AxesNames ,TESTlist_of_t_AxesNames, plotmode, newplot )
+
+
+        #version 3: 2D Tests  without new plot, 2 times max, 3 Dim x,y,z,t
+        if version == 3:
+                newplot = 0
+                plotmode = 0
+
+                TESTlist_of_x_AxesNames = [ "Xasdf" ]
+                TESTlist_of_y_AxesNames = [ "Yasdf" ]
+                TESTlist_of_z_AxesNames = [ "Zasdf" ]
+                TESTlist_of_t_AxesNames = [ "Tasdf" ]
+
+                file_2D_for_function = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_20151112.npy",r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\denormResultsNN_20151112.npy"]
+                plotData( file_2D_for_function , TESTlist_of_x_AxesNames, TESTlist_of_y_AxesNames , TESTlist_of_z_AxesNames ,TESTlist_of_t_AxesNames, plotmode, newplot )
+
+
+        #version 4: 3D Tests  without new plot, 2 times max, 3 Dim x,y,z,t
+        if version == 4:
+                newplot = 0
+                plotmode = 1
+
+                TESTlist_of_x_AxesNames = [ "Xasdf" ]
+                TESTlist_of_y_AxesNames = [ "Yasdf" ]
+                TESTlist_of_z_AxesNames = [ "Zasdf" ]
+                TESTlist_of_t_AxesNames = [ "Tasdf" ]
+
+                file_2D_for_function = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_20151112.npy",r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\denormResultsNN_20151112.npy"]
+                plotData( file_2D_for_function , TESTlist_of_x_AxesNames, TESTlist_of_y_AxesNames , TESTlist_of_z_AxesNames ,TESTlist_of_t_AxesNames, plotmode, newplot )
+
+        #version 5: 2D Tests  without new plot, 1 time max, 3Dim x,t only
+        if version == 5:
+                newplot = 0
+                plotmode = 1
+
+                TESTlist_of_x_AxesNames = [ "Xasdf" ]
+                TESTlist_of_y_AxesNames = [ "Yasdf" ]
+                TESTlist_of_z_AxesNames = [ "Zasdf" ]
+                TESTlist_of_t_AxesNames = [ "Tasdf" ]
+
+                file_2D_for_function = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_x_t_20151112.npy",r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_y_t_20151112.npy"]
+                plotData( file_2D_for_function , TESTlist_of_x_AxesNames, TESTlist_of_y_AxesNames , TESTlist_of_z_AxesNames , TESTlist_of_t_AxesNames, plotmode, newplot )
+
+        #version 6: without parameters
+        if version == 6:
+
+                plotData()
+
+
+
+

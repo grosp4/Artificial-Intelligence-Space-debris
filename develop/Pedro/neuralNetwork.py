@@ -3,8 +3,8 @@ __author__ = 'Pedro'
 import numpy as np
 import random
 from filenameGenerator import generateFilename
-import re
-import pickle
+from Pedro import *
+import sys
 
 class NN():
 
@@ -145,7 +145,7 @@ class NN():
             epoch += 1
             error = self.trainer.train()
 
-            self.trainError = np.vstack([np.append(epoch,error),self.trainError])
+            self.trainError = np.vstack([self.trainError, np.append(epoch,error)])
 
             if verbose:
                 print "Error after epoch %d: %f" % (epoch, error)
@@ -178,7 +178,7 @@ class NN():
 
         return 0
 
-    def saveResults(self,filepath = generateFilename(description='nnResults'),outputWriteMode='wb+'):
+    def saveResults(self,filepath = generateFilename(description='networkResults'),outputWriteMode='wb+'):
 
         if type(self.results).__module__ != np.__name__:
             return 2
@@ -192,7 +192,7 @@ class NN():
         except:
             return 1
 
-    def saveError(self,filepath = generateFilename(description='nnError'),outputWriteMode='wb+'):
+    def saveError(self,filepath = generateFilename(description='networkError'),outputWriteMode='wb+'):
 
         if type(self.trainError).__module__ != np.__name__:
             return 2
@@ -207,27 +207,11 @@ class NN():
             return 1
 
     def getWeights(self):
-        listOfWeights = []
         for mod in self.net.modules:
             for conn in self.net.connections[mod]:
-                connection = []
-                connection.extend(re.sub("[^\w]", " ",  str(mod)).split())
-                connection.extend(re.sub("[^\w]", " ",  str(conn)).split())
-                del connection[1]
-                del connection[1]
-                connection.append(conn.params)
-                listOfWeights.append(connection)
-
-        return listOfWeights
-
-    def saveWeights(self, filepath = generateFilename(description="weigthsNN",extension="")):
-        try:
-            pickle.dump(self.getWeights(),open(filepath,"wb"))
-            return 0
-
-        except:
-            return 1
-
+                print conn
+                #for cc in range(len(conn.params)):
+                    #print conn.whichBuffers(cc), conn.params[cc]
 
 if __name__ == "__main__":
 
@@ -244,7 +228,7 @@ if __name__ == "__main__":
 
             loadData = NN1.loadData(inputFilePath,outputFilePath)
 
-            NN1.teachPyBrain(verbose=True)
+            NN1.teachPyBrain(verbose=False)
 
             NN1.getWeights()
 
