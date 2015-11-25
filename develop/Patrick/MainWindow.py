@@ -7,10 +7,10 @@ from matplotlib.backends.backend_gtkagg import FigureCanvasGTKAgg as FigureCanva
 #  *  local variables
 #  ******************************************************************************/
 pathname = '\dataset'   # pathname to get to a specific folder
-debug = 1               # debug value 0 = no debug
 printInNewPlot = 0      # 0 = no new plot, using old one
 plotmode = 0            # 0 = 2D mode, 1 = 3D Mode
-dataset = "None"
+dataset = ["None", "None"]
+
 # /******************************************************************************/
 # /** \file          Class baseWindow
 #  *  \brief         TBD
@@ -60,6 +60,7 @@ class baseWindow:
 
             self.Button_PlotData = gtk.Button("Plot Data ")
             self.Button_PlotData.connect("clicked", self.plot)
+            self.Button_PlotData.connect("clicked", self.callPlotFunctions)
 
             self.Button_Exit = gtk.Button("Exit")
             self.Button_Exit.connect("clicked", self.destroyOurWindow)
@@ -76,16 +77,29 @@ class baseWindow:
             self.label_distance_4 = gtk.Label(" ")
             self.label_distance_5 = gtk.Label(" ")
             self.label_distance_6 = gtk.Label(" ")
+            self.label_distance_7 = gtk.Label(" ")
             self.label_status = gtk.Label("ready")
             self.label_warning= gtk.Label("Warning! All old plots will be deleted! ")
+            distance_label_value = 20
 
             #switch buttom creating starts here
             self.combo_between_2D_and_3D_Plot = gtk.combo_box_new_text()
             self.combo_between_2D_and_3D_Plot.set_entry_text_column(0)
             self.combo_between_2D_and_3D_Plot.connect("changed", self.getPlotmode)
-            self.combo_dataset = gtk.combo_box_new_text()
-            self.combo_dataset.connect("changed", self.getDatasetToPlot)
+            self.combo_dataset_one = gtk.combo_box_new_text()
+            self.combo_dataset_two = gtk.combo_box_new_text()
+            self.combo_dataset_one.connect("changed", self.getDatasetOneToPlot)
+            self.combo_dataset_two.connect("changed", self.getDatasetTwoToPlot)
 
+            # entry fields creating starts here
+            self.entry_X = gtk.Entry()
+            self.entry_Y = gtk.Entry()
+            self.entry_Z = gtk.Entry()
+            self.entry_T = gtk.Entry()
+            self.entry_X.set_text("X-Axes Name")
+            self.entry_Y.set_text("Y-Axes Name")
+            self.entry_Z.set_text("Z-Axes Name")
+            self.entry_T.set_text("T-Axes Name")
 
 
 
@@ -96,19 +110,21 @@ class baseWindow:
 
             #get data files in write them into a combobox
             List_data_for_combo_box = Patrick.getAllDatasetFileNames(pathname)
-            if debug:
+            if Patrick.debug:
                     print List_data_for_combo_box
 
             # write all files into the combobox
             currentListElement = 0
             while currentListElement <len(List_data_for_combo_box):
-                     if debug:
+                     if Patrick.debug:
                              print List_data_for_combo_box[currentListElement]
                      # add to combobox
-                     self.combo_dataset.append_text(List_data_for_combo_box[currentListElement])
+                     self.combo_dataset_one.append_text(List_data_for_combo_box[currentListElement])
+                     self.combo_dataset_two.append_text(List_data_for_combo_box[currentListElement])
                      currentListElement+=1
             #set combobox active
-            self.combo_dataset.set_active(0)
+            self.combo_dataset_one.set_active(0)
+            self.combo_dataset_two.set_active(0)
 
             # container creating starts here
             self.box_container_horizontal = gtk.HBox()
@@ -125,48 +141,66 @@ class baseWindow:
             self.Button_Training.set_size_request(200, 40)
 
             self.box_container_vertical_left.pack_start(self.label_distance_1,expand=False, fill=False, padding=False)
-            self.label_distance_1.set_size_request(200, 40)
+            self.label_distance_1.set_size_request(200, distance_label_value)
 
             self.box_container_vertical_left.pack_start(self.NewPlotButton,expand=True, fill=False, padding=False)
             self.NewPlotButton.set_size_request(200, 40)
 
             self.box_container_vertical_left.pack_start(self.label_warning,expand=False, fill=False, padding=False)
-            self.label_warning.set_size_request(200, 40)
+            self.label_warning.set_size_request(200, distance_label_value)
 
             self.box_container_vertical_left.pack_start(self.label_distance_2,expand=False, fill=False, padding=False)
-            self.label_distance_2.set_size_request(200, 40)
+            self.label_distance_2.set_size_request(200, distance_label_value)
 
             self.box_container_vertical_left.pack_start(self.combo_between_2D_and_3D_Plot,expand=False, fill=False, padding=False)
             self.combo_between_2D_and_3D_Plot.set_size_request(200, 40)
 
-            self.box_container_vertical_left.pack_start(self.label_distance_3,expand=False, fill=False, padding=False)
-            self.label_distance_3.set_size_request(200, 40)
+            #self.box_container_vertical_left.pack_start(self.label_distance_3,expand=False, fill=False, padding=False)
+            #self.label_distance_3.set_size_request(200, distance_label_value)
 
-            self.box_container_vertical_left.pack_start(self.combo_dataset,expand=True, fill=False, padding=False)
-            self.combo_dataset.set_size_request(200, 40)
+            self.box_container_vertical_left.pack_start(self.combo_dataset_one,expand=True, fill=False, padding=False)
+            self.combo_dataset_one.set_size_request(200, 40)
 
-            self.box_container_vertical_left.pack_start(self.label_distance_4,expand=True, fill=False, padding=False)
-            self.label_distance_4.set_size_request(200, 10)
+            #self.box_container_vertical_left.pack_start(self.label_distance_4,expand=True, fill=False, padding=False)
+            #self.label_distance_4.set_size_request(200, distance_label_value)
+
+            self.box_container_vertical_left.pack_start(self.combo_dataset_two,expand=True, fill=False, padding=False)
+            self.combo_dataset_two.set_size_request(200, 40)
+
+            #self.box_container_vertical_left.pack_start(self.label_distance_5,expand=True, fill=False, padding=False)
+            #self.label_distance_4.set_size_request(200, distance_label_value)
+
+            self.box_container_vertical_left.pack_start(self.entry_X,expand=True, fill=False, padding=False)
+            self.entry_X.set_size_request(200, 40)
+
+            self.box_container_vertical_left.pack_start(self.entry_Y,expand=True, fill=False, padding=False)
+            self.entry_Y.set_size_request(200, 40)
+
+            self.box_container_vertical_left.pack_start(self.entry_Z,expand=True, fill=False, padding=False)
+            self.entry_Z.set_size_request(200, 40)
+
+            self.box_container_vertical_left.pack_start(self.entry_T,expand=True, fill=False, padding=False)
+            self.entry_T.set_size_request(200, 40)
 
             self.box_container_vertical_left.pack_start(self.Button_PlotData, expand=False, fill=False)
             self.Button_PlotData.set_size_request(200, 40)
 
-            self.box_container_vertical_left.pack_start(self.label_distance_5,expand=False, fill=False, padding=False)
-            self.label_distance_5.set_size_request(200, 300)
+            self.box_container_vertical_left.pack_start(self.label_distance_6,expand=False, fill=False, padding=False)
+            self.label_distance_5.set_size_request(200, distance_label_value)
 
             self.box_container_vertical_left.pack_start(self.Button_Exit, expand = False, fill = False)
             self.Button_Exit.set_size_request(200, 40)
 
-            self.box_container_vertical_left.pack_start(self.label_distance_6,expand=True, fill=False, padding=False)
-            self.label_distance_6.set_size_request(200, 20)
+            self.box_container_vertical_left.pack_start(self.label_distance_7,expand=True, fill=False, padding=False)
+            self.label_distance_6.set_size_request(200, distance_label_value)
 
             self.box_container_vertical_left.pack_start(self.label_status,expand=True, fill=False, padding=False)
-            self.label_status.set_size_request(200, 20)
+            self.label_status.set_size_request(200, distance_label_value)
 
             # aligning properties of widgets
             self.label_status.set_alignment(0.1,0.1)
 
-            if debug:
+            if Patrick.debug:
                 f = plt.figure()
                 a = f.add_subplot(111)
                 t = [1,2,3,4]
@@ -194,7 +228,7 @@ class baseWindow:
 #  *
 #  *******************************************************************************/
     def plot(self,widget):
-            if debug:
+            if Patrick.debug:
                 print "entering plotmode"
             self.label_status.set_text(widget.get_label())
 
@@ -247,7 +281,7 @@ class baseWindow:
                 self.label_warning.show()
                 self.label_distance_2.hide()
 
-            if debug:
+            if Patrick.debug:
                 print "%s was toggled %s" % (data, ("OFF", "ON")[widget.get_active()])
                 print printInNewPlot
 
@@ -270,25 +304,63 @@ class baseWindow:
             else:
                 plotmode = 1
 
-            if debug:
+            if Patrick.debug:
                 print("Selected: %s " % text)
 
 
 #  ******************************************************************************/
 # /*
-#  *     functionname:          @ getPlotmode
+#  *     functionname:          @ getDatasetOneToPlot
 #  *     parameter:             @
 #  *     returns:               @
 #  *     description:           @
 #  *
 #  *
 #  *******************************************************************************/
-    def getDatasetToPlot(self,widget):
+    def getDatasetOneToPlot(self,widget):
             global dataset
-            dataset = widget.get_active_text()
-            self.label_status.set_text("%s choosen" % dataset)
-            if debug:
-                print("Selected: %s " % dataset)
+            temp = r"\\"
+            temp = Patrick.getDatasetPath(pathname) +temp
+            dataset[0] = temp + widget.get_active_text()
+            self.label_status.set_text("%s choosen" % dataset[0])
+
+            if Patrick.debug:
+                print("Selected: %s " % dataset[0])
+
+
+#  ******************************************************************************/
+# /*
+#  *     functionname:          @ getDatasetTwoToPlot
+#  *     parameter:             @
+#  *     returns:               @
+#  *     description:           @
+#  *
+#  *
+#  *******************************************************************************/
+    def getDatasetTwoToPlot(self,widget):
+            global dataset
+            temp = r"\\"
+            temp = Patrick.getDatasetPath(pathname) +temp
+            dataset[1] = temp + widget.get_active_text()
+            self.label_status.set_text("%s choosen" % dataset[1])
+
+            if Patrick.debug:
+                print("Selected: %s " % dataset[1])
+
+
+#  ******************************************************************************/
+# /*
+#  *     functionname:          @ callPlotFunctions
+#  *     parameter:             @
+#  *     returns:               @
+#  *     description:           @
+#  *
+#  *
+#  *******************************************************************************/
+    def callPlotFunctions(self,widget):
+
+        Patrick.plotData(dataset, self.entry_X.get_text(), self.entry_Y.get_text(), self.entry_Z.get_text(), self.entry_T.get_text(), plotmode, printInNewPlot)
+
 
 
 #  debug main

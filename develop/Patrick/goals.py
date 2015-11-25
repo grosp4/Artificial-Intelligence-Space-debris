@@ -16,7 +16,7 @@ from Pedro import *
 #  *
 #  *
 #  *******************************************************************************/
-def plotData (debug = 0 ):
+def plotData2 (debug = 0 ):
 
 
     # generate list of elements to compare calculation and training

@@ -26,6 +26,8 @@ __author__ = 'Patrick'
 
 import matplotlib.pyplot as plt
 import numpy as numblibrary
+import Patrick
+from mpl_toolkits.mplot3d import Axes3D
 
 
 #  ******************************************************************************/
@@ -49,7 +51,7 @@ import numpy as numblibrary
 #  *******************************************************************************/
 def plotData( list_of_FilesToLoad = None, list_of_x_AxesName = "x Axes", list_of_y_AxesName = "Y Axes" , list_of_z_AxesName = "Z Axes" , list_of_t_AxesName = "time axes", plotmode = 0, newPlot = 0 ):
     # initialize index
-
+    Patrick.debug
     currentListElement = 0
     # check if the list of filenames has an entry
     if list_of_FilesToLoad == None :
@@ -67,7 +69,11 @@ def plotData( list_of_FilesToLoad = None, list_of_x_AxesName = "x Axes", list_of
 
             # print as long as we have elements in our list
             while currentListElement <len(list_of_FilesToLoad) :
-                    dataset = numblibrary.load(list_of_FilesToLoad[currentListElement])
+                    if list_of_FilesToLoad[currentListElement] == "None":
+                            print("Error in PlotDataset, contains invalid data, goes on anyways \n")
+
+                    else:
+                            dataset = numblibrary.load(list_of_FilesToLoad[currentListElement])
 
                     # check if all values in dataset are zero
                     if numblibrary.all(dataset == 0):
@@ -80,7 +86,7 @@ def plotData( list_of_FilesToLoad = None, list_of_x_AxesName = "x Axes", list_of
                     else:
                             #  decide wether the matrix is 1, 2, 3, 4 dimensional -> specify plot
                             dataset_size = dataset.shape
-                            if debug:
+                            if Patrick.debug:
                                     print (dataset_size[1], currentListElement)
 
                             # for multiplotting, change color
@@ -149,7 +155,7 @@ def plotData( list_of_FilesToLoad = None, list_of_x_AxesName = "x Axes", list_of
 
                                     #generate two subplots for x to z and y to z correlation
                                     if plotmode == 0:
-                                            if debug:
+                                            if Patrick.debug:
                                                     print "2D Mode active"
 
                                             plot2d_x= figure.add_subplot(311)
@@ -169,11 +175,11 @@ def plotData( list_of_FilesToLoad = None, list_of_x_AxesName = "x Axes", list_of
 
                                     #if 3D has been requested
                                     else:
-                                            if debug:
+                                            if Patrick.debug:
                                                     print "3D Mode active"
 
-                                            plot3d =figure.add_subplot(111, projection='3d')
-                                            plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c= 'r', marker='o')
+                                            plot3d = figure.add_subplot(111, projection='3d')
+                                            plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='r', marker='o')
                                             plot3d.set_ylabel(list_of_x_AxesName)
                                             plot3d.set_ylabel(list_of_y_AxesName)
                                             plot3d.set_ylabel(list_of_z_AxesName)
@@ -190,7 +196,7 @@ if __name__ == "__main__":
 
         # debug variables
         debug = 1
-        version = 3
+        version = 5
 
         #version 1: 2D Tests  without new plot, 2 times max, 2Dim x,t only
         if version == 1:
@@ -202,10 +208,10 @@ if __name__ == "__main__":
                 TESTlist_of_z_AxesNames = [ "Zasdf" ]
                 TESTlist_of_t_AxesNames = [ "Tasdf" ]
 
-                file_2D_for_function = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_x_t_20151112.npy",r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_y_t_20151112.npy"]
+                file_2D_for_function = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_x_t_20151112.npy",r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_y_t_20151118.npy"]
                 plotData( file_2D_for_function , TESTlist_of_x_AxesNames, TESTlist_of_y_AxesNames , TESTlist_of_z_AxesNames , TESTlist_of_t_AxesNames, plotmode, newplot )
 
-                file_2D_for_function = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_x_t_20151112.npy",r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_y_t_20151112.npy"]
+                file_2D_for_function = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_x_t_20151112.npy",r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_y_t_20151118.npy"]
                 plotData( file_2D_for_function , TESTlist_of_x_AxesNames, TESTlist_of_y_AxesNames , TESTlist_of_z_AxesNames ,TESTlist_of_t_AxesNames, plotmode, newplot )
 
 
@@ -219,7 +225,7 @@ if __name__ == "__main__":
                 TESTlist_of_z_AxesNames = [ "Zasdf" ]
                 TESTlist_of_t_AxesNames = [ "Tasdf" ]
 
-                file_2D_for_function = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_20151112.npy",]
+                file_2D_for_function = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\outputDatasetISS (ZARYA)_20151118.npy",]
                 plotData( file_2D_for_function , TESTlist_of_x_AxesNames, TESTlist_of_y_AxesNames , TESTlist_of_z_AxesNames ,TESTlist_of_t_AxesNames, plotmode, newplot )
 
 
@@ -233,7 +239,7 @@ if __name__ == "__main__":
                 TESTlist_of_z_AxesNames = [ "Zasdf" ]
                 TESTlist_of_t_AxesNames = [ "Tasdf" ]
 
-                file_2D_for_function = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_20151112.npy",r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\denormResultsNN_20151112.npy"]
+                file_2D_for_function = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\outputDatasetISS (ZARYA)_20151118.npy", r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\denormResultsNNISS (ZARYA)_20151118.npy"]
                 plotData( file_2D_for_function , TESTlist_of_x_AxesNames, TESTlist_of_y_AxesNames , TESTlist_of_z_AxesNames ,TESTlist_of_t_AxesNames, plotmode, newplot )
 
 
@@ -247,7 +253,7 @@ if __name__ == "__main__":
                 TESTlist_of_z_AxesNames = [ "Zasdf" ]
                 TESTlist_of_t_AxesNames = [ "Tasdf" ]
 
-                file_2D_for_function = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_20151112.npy",r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\denormResultsNN_20151112.npy"]
+                file_2D_for_function = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\outputDatasetISS (ZARYA)_20151118.npy", r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\denormResultsNNISS (ZARYA)_20151118.npy"]
                 plotData( file_2D_for_function , TESTlist_of_x_AxesNames, TESTlist_of_y_AxesNames , TESTlist_of_z_AxesNames ,TESTlist_of_t_AxesNames, plotmode, newplot )
 
         #version 5: 2D Tests  without new plot, 1 time max, 3Dim x,t only
@@ -260,7 +266,7 @@ if __name__ == "__main__":
                 TESTlist_of_z_AxesNames = [ "Zasdf" ]
                 TESTlist_of_t_AxesNames = [ "Tasdf" ]
 
-                file_2D_for_function = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_x_t_20151112.npy",r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\inputDataset_y_t_20151112.npy"]
+                file_2D_for_function = [r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\outputDatasetISS (ZARYA)_20151118.npy", r"D:\private stuff\Wroclaw University of Technology\Materials\advanced_topics_in_artificial_intelligence\Exercise\GitHub\Artificial-Intelligence-Space-debris\develop\dataset\denormResultsNNISS (ZARYA)_20151118.npy"]
                 plotData( file_2D_for_function , TESTlist_of_x_AxesNames, TESTlist_of_y_AxesNames , TESTlist_of_z_AxesNames , TESTlist_of_t_AxesNames, plotmode, newplot )
 
         #version 6: without parameters

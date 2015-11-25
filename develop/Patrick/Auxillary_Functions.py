@@ -59,10 +59,42 @@ def getAllDatasetFileNames(pathname= '\dataset'):
 
         #debug output
         if debug:
-            print datasetDirectory
             print list_of_files
 
         return list_of_files
+
+#  ******************************************************************************/
+# /*
+#  *     functionname:          @ getDatasetPath
+#  *     parameter:             @ pathname, a pathname in the project you want to get to
+#  *     returns:               @ the path to pathname you gave
+#  *     description:           @ the total path of your system to dataset folder, e.g you enter "/folder1"  result is c:/programm/myprogram/folder1
+#  *
+#  *
+#  *******************************************************************************/
+def getDatasetPath(pathname):
+
+        # get current directory of package
+        currentDirectory = getcwd()
+
+        # go one folder up, because we want to go into another folder
+        chdir('..')
+
+        #get parent directory
+        parentDirectory = getcwd()
+        chdir(currentDirectory)
+
+        #create new path with dataset and parent directory
+        datasetDirectory = parentDirectory + pathname
+
+        #debug output
+        if debug:
+            print datasetDirectory
+
+
+        return datasetDirectory
+
+
 
 
 # to debug
@@ -70,3 +102,5 @@ if __name__ == "__main__":
 
     pathname = '\dataset'
     getAllDatasetFileNames(pathname)
+
+    getDatasetPath(pathname)
