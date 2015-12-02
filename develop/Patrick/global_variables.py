@@ -6,5 +6,5 @@ __author__ = 'Patrick'
 #  *                       so it is a easier way to access them.
 #  *
 #  ******************************************************************************/
-debug = 1                       # debug value 0 = no debug
-datasetForPlot = ["None", "None"]      # dataset list for GUI
+debug = 1                               # debug value 0 = no debug output
+datasetForPlot = ["None", "None"]       # dataset list for GUI

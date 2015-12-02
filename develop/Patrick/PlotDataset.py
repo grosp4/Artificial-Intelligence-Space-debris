@@ -187,6 +187,7 @@ def plotData( list_of_FilesToLoad = None, list_of_x_AxesName = "x Axes", list_of
 
             if error == 0:
                     plt.show()
+
             plt.legend("")
 
     return 0

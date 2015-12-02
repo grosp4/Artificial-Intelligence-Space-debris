@@ -77,11 +77,11 @@ class baseWindow:
             # distance labels are between buttons, and enumerated from top to down (1 is uppest one)
             self.label_distance_1 = gtk.Label(" ")
             self.label_distance_2 = gtk.Label(" ")
-            self.label_distance_3 = gtk.Label(" ")
             self.label_distance_4 = gtk.Label(" ")
             self.label_distance_5 = gtk.Label(" ")
             self.label_distance_6 = gtk.Label(" ")
             self.label_distance_7 = gtk.Label(" ")
+            self.label_Accuracy_of_plot = gtk.Label(" Accuracy between 1 to 100 ")
             self.label_status = gtk.Label("ready")
             self.label_warning= gtk.Label("Warning! All old plots will be deleted! ")
             distance_label_value = 20
@@ -100,10 +100,12 @@ class baseWindow:
             self.entry_Y = gtk.Entry()
             self.entry_Z = gtk.Entry()
             self.entry_T = gtk.Entry()
+            self.entry_accuracy = gtk.Entry()
             self.entry_X.set_text("X-Axes Name")
             self.entry_Y.set_text("Y-Axes Name")
             self.entry_Z.set_text("Z-Axes Name")
             self.entry_T.set_text("T-Axes Name")
+            self.entry_accuracy.set_text("100")
 
 
 
@@ -177,6 +179,12 @@ class baseWindow:
             self.box_container_vertical_left.pack_start(self.entry_T,expand=True, fill=False, padding=False)
             self.entry_T.set_size_request(200, 40)
 
+            self.box_container_vertical_left.pack_start(self.label_Accuracy_of_plot,expand=False, fill=False, padding=False)
+            self.label_Accuracy_of_plot.set_size_request(200, distance_label_value)
+
+            self.box_container_vertical_left.pack_start(self.entry_accuracy,expand=True, fill=False, padding=False)
+            self.entry_accuracy.set_size_request(200, 40)
+
             self.box_container_vertical_left.pack_start(self.Button_PlotData, expand=False, fill=False)
             self.Button_PlotData.set_size_request(200, 40)
 
@@ -195,11 +203,12 @@ class baseWindow:
             # aligning properties of widgets
             self.label_status.set_alignment(0.1,0.1)
 
+            # just a a debug
             if Patrick.debug:
                 f = plt.figure()
                 a = f.add_subplot(111)
-                t = [1,2,3,4]
-                s = [1,2,3,5]
+                t = [1,2,3,4,5,6,7,8,9,10]
+                s = [1,100,1,100,1,100,1,100,1,100]
                 a.plot(t, s)
                 self.canvas = FigureCanvas(f)
                 self.box_container_vertical_right.pack_start(self.canvas, True, True, 0)
