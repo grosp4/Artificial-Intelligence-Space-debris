@@ -26,7 +26,9 @@ __author__ = 'Patrick'
 
 import matplotlib.pyplot as plt
 import numpy as numblibrary
+from cycler import cycler
 import Patrick
+import os
 from mpl_toolkits.mplot3d import Axes3D
 
 
@@ -75,120 +77,119 @@ def plotData( list_of_FilesToLoad = None, list_of_x_AxesName = "x Axes", list_of
                     else:
                             dataset = numblibrary.load(list_of_FilesToLoad[currentListElement])
 
-                    # check if all values in dataset are zero
-                    if numblibrary.all(dataset == 0):
-                            print("Error in PlotDataset, contains invalid data \n")
-                            print('Pathname in PlotData path is: %S \n', list_of_FilesToLoad[currentListElement])
-                            error = 1
-                            break
+                            # check if all values in dataset are zero
+                            if numblibrary.all(dataset == 0):
+                                    print("Error in PlotDataset, contains invalid data \n")
+                                    print('Pathname in PlotData path is: %S \n', list_of_FilesToLoad[currentListElement])
+                                    error = 1
+                                    break
 
-                    # if dataset contains values, we have a valid file, if not abort
-                    else:
-                            #  decide wether the matrix is 1, 2, 3, 4 dimensional -> specify plot
-                            dataset_size = dataset.shape
-                            if Patrick.debug:
-                                    print (dataset_size[1], currentListElement)
-
-                            # for multiplotting, change color
-                            if currentListElement == 0:
-                                    symbolInPlot = 'r*'
-
-                            elif currentListElement == 1:
-                                    symbolInPlot = 'c.'
-
-                            elif currentListElement == 2:
-                                    symbolInPlot = 'b.'
-
+                            # if dataset contains values, we have a valid file, if not abort
                             else:
-                                    symbolInPlot = 'b.'
+                                    #  decide wether the matrix is 1, 2, 3, 4 dimensional -> specify plot
+                                    dataset_size = dataset.shape
+                                    if Patrick.debug:
+                                            print "Debug PlotDataset.Plotdata: ", (dataset_size[1], currentListElement)
 
-                            # 2 dimensional -> x,y
-                            if dataset_size[1] == 2:
+                                    # for multiplotting, change color
+                                    if currentListElement == 0:
+                                            symbolInPlot = '-*'
 
-                                    if plotmode == 0:
-                                            plot2d= figure.add_subplot(111)
-                                            data_x_axes = dataset[:, 0]
-                                            data_y_axes = dataset[:, 1]
+                                    elif currentListElement == 1:
+                                            symbolInPlot = '-*'
 
-                                            #Draw 2 dim diagram
-                                            plt.xlabel(list_of_x_AxesName)
-                                            plt.ylabel(list_of_y_AxesName)
+                                    else:
+                                            symbolInPlot = '-.'
 
-                                            plot2d.plot(data_y_axes,data_x_axes, symbolInPlot, label="Output Dataset")
+                                    # 2 dimensional -> x,y
+                                    if dataset_size[1] == 2:
 
-                                    #refuse 3D Plot
-                                    if plotmode == 1:
-                                            print("This function can not plot 2D Data (x,t) in 3D \n")
-                                            error = 1
-                                            break
+                                            if plotmode == 0:
+                                                    plot2d= figure.add_subplot(111)
+                                                    data_x_axes = dataset[:, 0]
+                                                    data_y_axes = dataset[:, 1]
 
-                            # 3 dimensional -> x,y,t
-                            elif dataset_size[1] == 3:
-                                    #generate two subplots for x to z and y to z correlation
-                                    if plotmode == 0:
-                                            plot2d_x= figure.add_subplot(111)
-                                            plot2d_y= figure.add_subplot(121)
+                                                    #Draw 2 dim diagram
+                                                    plt.xlabel(list_of_x_AxesName)
+                                                    plt.ylabel(list_of_y_AxesName)
+                                                    plt.rc('axes', prop_cycle=(cycler('color', ['r', 'g', 'b', 'y'])))
+
+                                                    plot2d.plot(data_y_axes, data_x_axes,symbolInPlot, label= os.path.basename(list_of_FilesToLoad[currentListElement]) )
+
+                                            #refuse 3D Plot
+                                            if plotmode == 1:
+                                                    print("This function can not plot 2D Data (x,t) in 3D \n")
+                                                    error = 1
+                                                    break
+
+                                    # 3 dimensional -> x,y,t
+                                    elif dataset_size[1] == 3:
+                                            #generate two subplots for x to z and y to z correlation
+                                            if plotmode == 0:
+                                                    plot2d_x= figure.add_subplot(111)
+                                                    plot2d_y= figure.add_subplot(121)
+                                                    data_x_axes = dataset[:, 0]
+                                                    data_y_axes = dataset[:, 1]
+                                                    data_z_axes = dataset[:, 2]
+
+                                                    #Draw 2 dim diagram
+                                                    plt.xlabel(list_of_x_AxesName)
+                                                    plt.ylabel(list_of_y_AxesName)
+                                                    plt.rc('axes', prop_cycle=(cycler('color', ['r', 'g', 'b', 'y'])))
+                                                    plot2d_x.plot(data_z_axes, data_x_axes, symbolInPlot, label=" to TBD")
+                                                    plot2d_y.plot(data_z_axes, data_y_axes, symbolInPlot, label=" to TBD")
+
+                                            #refuse 3D Plot
+                                            if plotmode == 1:
+                                                    print("This function can not plot 2D Data (x,y,t) in 3D \n")
+                                                    error = 1
+                                                    break
+
+                                    # 3 dimensional -> x,y,z,t, plotting without time function (time is indizes of length of elements)
+                                    elif dataset_size[1] == 4:
+
                                             data_x_axes = dataset[:, 0]
                                             data_y_axes = dataset[:, 1]
                                             data_z_axes = dataset[:, 2]
+                                            data_t_axes = dataset[:, 3]
 
-                                            #Draw 2 dim diagram
-                                            plt.xlabel(list_of_x_AxesName)
-                                            plt.ylabel(list_of_y_AxesName)
+                                            #generate two subplots for x to z and y to z correlation
+                                            if plotmode == 0:
+                                                    if Patrick.debug:
+                                                            print "Debug PlotDataset.Plotdata: 2D Mode active"
 
-                                            plot2d_x.plot(data_z_axes, data_x_axes, symbolInPlot, label=" to TBD")
-                                            plot2d_y.plot(data_z_axes, data_y_axes, symbolInPlot, label=" to TBD")
+                                                    plot2d_x= figure.add_subplot(311)
+                                                    plot2d_y= figure.add_subplot(312)
+                                                    plot2d_z= figure.add_subplot(313)
+                                                    plt.tight_layout()
 
-                                    #refuse 3D Plot
-                                    if plotmode == 1:
-                                            print("This function can not plot 2D Data (x,y,t) in 3D \n")
-                                            error = 1
-                                            break
+                                                    #Draw 2 dim diagram
+                                                    plot2d_x.set_ylabel(list_of_x_AxesName)
+                                                    plot2d_y.set_ylabel(list_of_y_AxesName)
+                                                    plot2d_z.set_ylabel(list_of_z_AxesName)
+                                                    plt.xlabel(list_of_t_AxesName)
+                                                    plt.rc('axes', prop_cycle=(cycler('color', ['r', 'g', 'b', 'y'])))
+                                                    plot2d_x.plot(data_t_axes, data_x_axes, symbolInPlot, label=" to TBD")
+                                                    plot2d_y.plot(data_t_axes, data_y_axes, symbolInPlot, label=" to TBD")
+                                                    plot2d_z.plot(data_t_axes, data_z_axes, symbolInPlot, label=" to TBD")
 
-                            # 3 dimensional -> x,y,z,t, plotting without time function (time is indizes of length of elements)
-                            elif dataset_size[1] == 4:
+                                            #if 3D has been requested
+                                            else:
+                                                    if Patrick.debug:
+                                                            print "Debug PlotDataset.Plotdata: 3D Mode active"
 
-                                    data_x_axes = dataset[:, 0]
-                                    data_y_axes = dataset[:, 1]
-                                    data_z_axes = dataset[:, 2]
-                                    data_t_axes = dataset[:, 3]
-
-                                    #generate two subplots for x to z and y to z correlation
-                                    if plotmode == 0:
-                                            if Patrick.debug:
-                                                    print "2D Mode active"
-
-                                            plot2d_x= figure.add_subplot(311)
-                                            plot2d_y= figure.add_subplot(312)
-                                            plot2d_z= figure.add_subplot(313)
-                                            plt.tight_layout()
-
-                                            #Draw 2 dim diagram
-                                            plot2d_x.set_ylabel(list_of_x_AxesName)
-                                            plot2d_y.set_ylabel(list_of_y_AxesName)
-                                            plot2d_z.set_ylabel(list_of_z_AxesName)
-                                            plt.xlabel(list_of_t_AxesName)
-
-                                            plot2d_x.plot(data_t_axes, data_x_axes, symbolInPlot, label=" to TBD")
-                                            plot2d_y.plot(data_t_axes, data_y_axes, symbolInPlot, label=" to TBD")
-                                            plot2d_z.plot(data_t_axes, data_z_axes, symbolInPlot, label=" to TBD")
-
-                                    #if 3D has been requested
-                                    else:
-                                            if Patrick.debug:
-                                                    print "3D Mode active"
-
-                                            plot3d = figure.add_subplot(111, projection='3d')
-                                            plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='r', marker='o')
-                                            plot3d.set_ylabel(list_of_x_AxesName)
-                                            plot3d.set_ylabel(list_of_y_AxesName)
-                                            plot3d.set_ylabel(list_of_z_AxesName)
-                    currentListElement+= 1
+                                                    plot3d = figure.add_subplot(111, projection='3d')
+                                                    plot3d.scatter(data_x_axes, data_y_axes, data_z_axes, c='r', marker='o')
+                                                    plot3d.set_ylabel(list_of_x_AxesName)
+                                                    plot3d.set_ylabel(list_of_y_AxesName)
+                                                    plot3d.set_ylabel(list_of_z_AxesName)
+                            currentListElement+= 1
 
             if error == 0:
+                    plt.legend()
                     plt.show()
 
-            plt.legend("")
+
 
     return 0
 

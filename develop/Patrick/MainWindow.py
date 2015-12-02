@@ -40,6 +40,7 @@ class baseWindow:
 #*******************************************************************************/
     printInNewPlot = 0      # 0 = no new plot, using old one
     dataTypesToPlot = "all" # possibilites are: "all", "satellites", "errors"
+    dataTypesToPlotLast = "errors_automatically"
     plotmode = 0            # 0 = 2D mode, 1 = 3D Mode
 #******************************************************************************/
 # /*
@@ -213,7 +214,7 @@ class baseWindow:
             self.label_status.set_alignment(0.1,0.1)
 
             # just a a debug
-            if Patrick.debug:
+            if Patrick.debug == 0:
                 f = plt.figure()
                 a = f.add_subplot(111)
                 t = [1,2,3,4,5,6,7,8,9,10]
@@ -329,13 +330,15 @@ class baseWindow:
 #  *
 #  *******************************************************************************/
     def getDatasetOneToPlot(self, widget):
-            temp = r"\\"
-            temp = Patrick.getDatasetPath(pathname) +temp
-            Patrick.datasetForPlot[0] = temp + widget.get_active_text()
-            self.label_status.set_text("%s chosen" % Patrick.datasetForPlot[0])
 
-            if Patrick.debug:
-                print("Selected: %s " % Patrick.datasetForPlot[0])
+          if self.dataTypesToPlotLast != "errors_automatically":
+                temp = r"\\"
+                temp = Patrick.getDatasetPath(pathname) +temp
+                Patrick.datasetForPlot[0] = temp + widget.get_active_text()
+                self.label_status.set_text("%s chosen" % Patrick.datasetForPlot[0])
+
+                if Patrick.debug:
+                    print("Selected: %s " % Patrick.datasetForPlot[0])
 
 
 #  ******************************************************************************/
@@ -348,13 +351,15 @@ class baseWindow:
 #  *
 #  *******************************************************************************/
     def getDatasetTwoToPlot(self, widget):
-            temp = r"\\"
-            temp = Patrick.getDatasetPath(pathname) +temp
-            Patrick.datasetForPlot[1] = temp + widget.get_active_text()
-            self.label_status.set_text("%s chosen" % Patrick.datasetForPlot[1])
 
-            if Patrick.debug:
-                print("Selected: %s " % Patrick.datasetForPlot[1])
+
+                temp = r"\\"
+                temp = Patrick.getDatasetPath(pathname) +temp
+                Patrick.datasetForPlot[1] = temp + widget.get_active_text()
+                self.label_status.set_text("%s chosen" % Patrick.datasetForPlot[1])
+
+                if Patrick.debug:
+                    print("Selected: %s " % Patrick.datasetForPlot[1])
 
 
 #  ******************************************************************************/
@@ -374,28 +379,26 @@ class baseWindow:
             #selection is harcoded, time issue to find a nice solution
             if text == "Only Satellites, choose up to 2 files":
 
+                    self.dataTypesToPlotLast = self.dataTypesToPlot
                     self.dataTypesToPlot = "satellite_manually"
                     List_data_for_combo_box = Patrick.getAllDatasetFileNames(pathname,"satellites")
 
-                    # write all files into the combobox
-                    currentListElement = 0
+                    model = self.combo_dataset_one.get_model()
                     self.combo_dataset_one.set_model(None)
-                    while currentListElement <len(List_data_for_combo_box):
-                            # add to combobox
-                            self.combo_dataset_one.append_text(List_data_for_combo_box[currentListElement])
-                            self.combo_dataset_two.append_text(List_data_for_combo_box[currentListElement])
-                            currentListElement+=1
+                    model.clear()
 
-                    #set combobox active
-                    self.combo_dataset_one.set_active(0)
-                    self.combo_dataset_two.set_active(0)
+                    model = self.combo_dataset_two.get_model()
+                    self.combo_dataset_two.set_model(None)
+                    model.clear()
+                    self.combo_dataset_one.set_model(model)
+                    self.combo_dataset_two.set_model(model)
 
-
-
+            # if automatically choosen errors, deactivate options
             elif text == "Only Errors, automatically chosen":
 
+                    self.dataTypesToPlotLast = self.dataTypesToPlot
                     self.dataTypesToPlot = "errors_automatically"
-                    List_data_for_combo_box = Patrick.getAllDatasetFileNames(pathname,"errors")
+                    #List_data_for_combo_box = [" automatically choosen"]
 
                     model = self.combo_dataset_one.get_model()
                     model.clear()
@@ -404,48 +407,56 @@ class baseWindow:
                     model = self.combo_dataset_two.get_model()
                     model.clear()
                     self.combo_dataset_two.set_model(None)
-
-
+                    self.combo_dataset_one.set_model(model)
+                    self.combo_dataset_two.set_model(model)
 
             elif text == "Only Errors, choose up to 2 files":
 
+                    self.dataTypesToPlotLast = self.dataTypesToPlot
                     self.dataTypesToPlot = "errors_manually"
 
                     List_data_for_combo_box = Patrick.getAllDatasetFileNames(pathname,"errors")
 
+                    model = self.combo_dataset_one.get_model()
                     self.combo_dataset_one.set_model(None)
+                    model.clear()
+
+                    model = self.combo_dataset_two.get_model()
                     self.combo_dataset_two.set_model(None)
+                    model.clear()
+                    self.combo_dataset_one.set_model(model)
+                    self.combo_dataset_two.set_model(model)
 
-                    # write all files into the combobox
-                    currentListElement = 0
-                    while currentListElement <len(List_data_for_combo_box):
-                             # add to combobox
-                             self.combo_dataset_one.append_text(List_data_for_combo_box[currentListElement])
-                             self.combo_dataset_two.append_text(List_data_for_combo_box[currentListElement])
-                             currentListElement+=1
-
-                    #set combobox active
-                    self.combo_dataset_one.set_active(0)
-                    self.combo_dataset_two.set_active(0)
 
             # else: "All Datafiles, choose up to 2 files"
             else:
+                    self.dataTypesToPlotLast = self.dataTypesToPlot
                     self.dataTypesToPlot = "all_types"
-
                     List_data_for_combo_box = Patrick.getAllDatasetFileNames(pathname,"all")
 
+                    model = self.combo_dataset_one.get_model()
+                    self.combo_dataset_one.set_model(None)
+                    model.clear()
 
-                    # write all files into the combobox
-                    currentListElement = 0
-                    while currentListElement <len(List_data_for_combo_box):
-                             # add to combobox
-                             self.combo_dataset_one.append_text(List_data_for_combo_box[currentListElement])
-                             self.combo_dataset_two.append_text(List_data_for_combo_box[currentListElement])
-                             currentListElement+=1
+                    model = self.combo_dataset_two.get_model()
+                    self.combo_dataset_two.set_model(None)
+                    model.clear()
+                    self.combo_dataset_one.set_model(model)
+                    self.combo_dataset_two.set_model(model)
 
-                    #set combobox active
-                    self.combo_dataset_one.set_active(0)
-                    self.combo_dataset_two.set_active(0)
+            # however whats choosen refresh the list
+            currentListElement = 0
+            while currentListElement <len(List_data_for_combo_box):
+                    self.combo_dataset_one.append_text(List_data_for_combo_box[currentListElement])
+                    self.combo_dataset_two.append_text(List_data_for_combo_box[currentListElement])
+                    self.combo_dataset_one.set_model(model)
+                    self.combo_dataset_two.set_model(model)
+                    currentListElement+=1
+
+            #set combobox active
+            self.combo_dataset_one.set_active(1)
+            self.combo_dataset_two.set_active(1)
+
 
             if Patrick.debug:
                 print("Debug MainWindow.getDataSets: %s " % self.dataTypesToPlot)
@@ -463,33 +474,33 @@ class baseWindow:
 #  *******************************************************************************/
     def callPlotFunctions(self,widget):
 
-        Patrick.debug
+            Patrick.debug
 
-        if self.dataTypesToPlot == "errors_automatically":
+            if self.dataTypesToPlot == "errors_automatically":
 
-                # get all files with "errors" at the beginning in the pathname folder
-                self.list_data_for_plot = []
-                self.list_data_for_plot = Patrick.getAllDatasetFileNames(pathname, "errors")
-                temp = "\\"
-                temp = Patrick.getDatasetPath(pathname) +temp
-                print temp
+                    # get all files with "errors" at the beginning in the pathname folder
+                    self.list_data_for_plot = []
+                    self.list_data_for_plot = Patrick.getAllDatasetFileNames(pathname, "errors")
+                    temp = "\\"
+                    temp = Patrick.getDatasetPath(pathname) +temp
 
-                # add to all filenames the path
-                currentListElement = 0
-                while currentListElement < len(self.list_data_for_plot):
-                    self.list_data_for_plot[currentListElement] = temp + self.list_data_for_plot[currentListElement]
+                    # add to all filenames the path
+                    currentListElement = 0
+                    while currentListElement < len(self.list_data_for_plot):
+                            self.list_data_for_plot[currentListElement] = temp + self.list_data_for_plot[currentListElement]
+                            if Patrick.debug:
+                                    print "Debug MainWindow.callPlotFunctions: ", self.list_data_for_plot[currentListElement]
+                            currentListElement+= 1
+
+                    # debug output:
                     if Patrick.debug:
-                            print "Debug MainWindow.callPlotFunctions: ", self.list_data_for_plot[currentListElement]
-                    currentListElement+= 1
+                            print "Debug MainWindow.callPlotFunctions: ", self.list_data_for_plot
 
-                if Patrick.debug:
-                        print "Debug MainWindow.callPlotFunctions: ", self.list_data_for_plot
+                    #start plotting
+                    Patrick.plotData(self.list_data_for_plot, self.entry_X.get_text(), self.entry_Y.get_text(), self.entry_Z.get_text(), self.entry_T.get_text(), self.plotmode, self.printInNewPlot)
 
-                #start plotting
-                Patrick.plotData(self.list_data_for_plot, self.entry_X.get_text(), self.entry_Y.get_text(), self.entry_Z.get_text(), self.entry_T.get_text(), self.plotmode, self.printInNewPlot)
-
-        else:
-                Patrick.plotData(Patrick.datasetForPlot, self.entry_X.get_text(), self.entry_Y.get_text(), self.entry_Z.get_text(), self.entry_T.get_text(), self.plotmode, self.printInNewPlot)
+            else:
+                    Patrick.plotData(Patrick.datasetForPlot, self.entry_X.get_text(), self.entry_Y.get_text(), self.entry_Z.get_text(), self.entry_T.get_text(), self.plotmode, self.printInNewPlot)
 
 
 

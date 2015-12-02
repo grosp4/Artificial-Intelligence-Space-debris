@@ -36,12 +36,13 @@ debug = 1
 # /*
 #  *     functionname:          @ getAllDatasetFileNames
 #  *     parameter:             @ pathname, pathname from the projects parent folder you want to go for to find files
+#  *                            @ dataSetPattern, beinning of a filename so you can select specific files
 #  *     returns:               @ list_of_files, a list of files in a a specific folder
 #  *     description:           @ list all files in of a specific folder, based on a relative path of the project
 #  *
 #  *
 #  *******************************************************************************/
-def getAllDatasetFileNames(pathname= '\dataset', dataSetType ="all"):
+def getAllDatasetFileNames(pathname= '\dataset', dataSetPattern ="all"):
 
         # get current directory of package
         currentDirectory = getcwd()
@@ -57,18 +58,18 @@ def getAllDatasetFileNames(pathname= '\dataset', dataSetType ="all"):
         #create new path with dataset and parent directory
         datasetDirectory = parentDirectory + pathname
 
-        if dataSetType == "all":
+        if dataSetPattern == "all":
 
                 list_of_files = os.listdir(datasetDirectory)
                 #debug output
                 if debug:
-                    print "Debug getAllDatasetFileNames: all"
+                    print "Debug Auxillary_Functions.getAllDatasetFileNames: all"
 
 
-        if dataSetType == "errors":
+        if dataSetPattern == "errors":
                 #debug output
                 if debug:
-                    print r"Debug getAllDatasetFileNames: errors"
+                    print r"Debug Auxillary_Functions.getAllDatasetFileNames: errors"
 
                 # pattern you looking for
                 pattern = "errorsNN_"
@@ -81,7 +82,7 @@ def getAllDatasetFileNames(pathname= '\dataset', dataSetType ="all"):
 
         #debug output
         if debug:
-            print "Debug getAllDatasetFileNames: " , list_of_files
+            print "Debug Auxillary_Functions.getAllDatasetFileNames: " , list_of_files
 
         return list_of_files
 
@@ -111,7 +112,7 @@ def getDatasetPath(pathname):
 
         #debug output
         if debug:
-            print "Debug getDatasetPath: ", datasetDirectory
+            print "Debug Auxillary_Functions.getDatasetPath: ", datasetDirectory
 
 
         return datasetDirectory
