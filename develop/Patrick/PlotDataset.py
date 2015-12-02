@@ -50,7 +50,7 @@ from mpl_toolkits.mplot3d import Axes3D
 #  *
 #  *******************************************************************************/
 def plotData( list_of_FilesToLoad = None, list_of_x_AxesName = "x Axes", list_of_y_AxesName = "Y Axes" , list_of_z_AxesName = "Z Axes" , list_of_t_AxesName = "time axes", plotmode = 0, newPlot = 0 ):
-    # initialize index
+
     Patrick.debug
     currentListElement = 0
     # check if the list of filenames has an entry
@@ -100,7 +100,7 @@ def plotData( list_of_FilesToLoad = None, list_of_x_AxesName = "x Axes", list_of
                                     symbolInPlot = 'b.'
 
                             else:
-                                    symbolInPlot = 's*'
+                                    symbolInPlot = 'b.'
 
                             # 2 dimensional -> x,y
                             if dataset_size[1] == 2:

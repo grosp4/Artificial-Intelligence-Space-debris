@@ -39,6 +39,7 @@ class baseWindow:
 #  *                        @ plotmode, 0 = 2D mode, 1 = 3D Mode
 #*******************************************************************************/
     printInNewPlot = 0      # 0 = no new plot, using old one
+    dataTypesToPlot = "all" # possibilites are: "all", "satellites", "errors"
     plotmode = 0            # 0 = 2D mode, 1 = 3D Mode
 #******************************************************************************/
 # /*
@@ -86,14 +87,19 @@ class baseWindow:
             self.label_warning= gtk.Label("Warning! All old plots will be deleted! ")
             distance_label_value = 20
 
-            #switch buttom creating starts here
+            #switch button creating starts here
             self.combo_between_2D_and_3D_Plot = gtk.combo_box_new_text()
             self.combo_between_2D_and_3D_Plot.set_entry_text_column(0)
             self.combo_between_2D_and_3D_Plot.connect("changed", self.getPlotmode)
+
             self.combo_dataset_one = gtk.combo_box_new_text()
-            self.combo_dataset_two = gtk.combo_box_new_text()
             self.combo_dataset_one.connect("changed", self.getDatasetOneToPlot)
+
+            self.combo_dataset_two = gtk.combo_box_new_text()
             self.combo_dataset_two.connect("changed", self.getDatasetTwoToPlot)
+
+            self.combo_datatype_to_plot = gtk.combo_box_new_text()
+            self.combo_datatype_to_plot.connect("changed", self.getDataSets)
 
             # entry fields creating starts here
             self.entry_X = gtk.Entry()
@@ -107,27 +113,27 @@ class baseWindow:
             self.entry_T.set_text("T-Axes Name")
             self.entry_accuracy.set_text("100")
 
-
-
             # populate the comboboxes
             self.combo_between_2D_and_3D_Plot.append_text("2D Plot")
             self.combo_between_2D_and_3D_Plot.append_text("3D Plot")
             self.combo_between_2D_and_3D_Plot.set_active(0)
 
+            self.combo_datatype_to_plot.append_text ("All Datafiles, choose up to 2 files")
+            self.combo_datatype_to_plot.append_text ("Only Errors, choose up to 2 files")
+            self.combo_datatype_to_plot.append_text ("Only Errors, automatically chosen")
+            self.combo_datatype_to_plot.append_text ("Only Satellites, choose up to 2 files")
+
             #get data files in write them into a combobox
             List_data_for_combo_box = Patrick.getAllDatasetFileNames(pathname)
-            if Patrick.debug:
-                    print List_data_for_combo_box
 
             # write all files into the combobox
             currentListElement = 0
             while currentListElement <len(List_data_for_combo_box):
-                     if Patrick.debug:
-                             print List_data_for_combo_box[currentListElement]
                      # add to combobox
                      self.combo_dataset_one.append_text(List_data_for_combo_box[currentListElement])
                      self.combo_dataset_two.append_text(List_data_for_combo_box[currentListElement])
                      currentListElement+=1
+
             #set combobox active
             self.combo_dataset_one.set_active(0)
             self.combo_dataset_two.set_active(0)
@@ -154,6 +160,9 @@ class baseWindow:
 
             self.box_container_vertical_left.pack_start(self.label_warning,expand=False, fill=False, padding=False)
             self.label_warning.set_size_request(200, distance_label_value)
+
+            self.box_container_vertical_left.pack_start(self.combo_datatype_to_plot,expand=False, fill=False, padding=False)
+            self.combo_datatype_to_plot.set_size_request(200, 40)
 
             self.box_container_vertical_left.pack_start(self.label_distance_2,expand=False, fill=False, padding=False)
             self.label_distance_2.set_size_request(200, distance_label_value)
@@ -350,6 +359,101 @@ class baseWindow:
 
 #  ******************************************************************************/
 # /*
+#  *     functionname:          @ getDataSets
+#  *     parameter:             @
+#  *     returns:               @
+#  *     description:           @
+#  *
+#  *
+#  *******************************************************************************/
+    def getDataSets(self,widget):
+
+            text = widget.get_active_text()
+            self.label_status.set_text("Last Action: %s" % text)
+
+            #selection is harcoded, time issue to find a nice solution
+            if text == "Only Satellites, choose up to 2 files":
+
+                    self.dataTypesToPlot = "satellite_manually"
+                    List_data_for_combo_box = Patrick.getAllDatasetFileNames(pathname,"satellites")
+
+                    # write all files into the combobox
+                    currentListElement = 0
+                    self.combo_dataset_one.set_model(None)
+                    while currentListElement <len(List_data_for_combo_box):
+                            # add to combobox
+                            self.combo_dataset_one.append_text(List_data_for_combo_box[currentListElement])
+                            self.combo_dataset_two.append_text(List_data_for_combo_box[currentListElement])
+                            currentListElement+=1
+
+                    #set combobox active
+                    self.combo_dataset_one.set_active(0)
+                    self.combo_dataset_two.set_active(0)
+
+
+
+            elif text == "Only Errors, automatically chosen":
+
+                    self.dataTypesToPlot = "errors_automatically"
+                    List_data_for_combo_box = Patrick.getAllDatasetFileNames(pathname,"errors")
+
+                    model = self.combo_dataset_one.get_model()
+                    model.clear()
+                    self.combo_dataset_one.set_model(None)
+
+                    model = self.combo_dataset_two.get_model()
+                    model.clear()
+                    self.combo_dataset_two.set_model(None)
+
+
+
+            elif text == "Only Errors, choose up to 2 files":
+
+                    self.dataTypesToPlot = "errors_manually"
+
+                    List_data_for_combo_box = Patrick.getAllDatasetFileNames(pathname,"errors")
+
+                    self.combo_dataset_one.set_model(None)
+                    self.combo_dataset_two.set_model(None)
+
+                    # write all files into the combobox
+                    currentListElement = 0
+                    while currentListElement <len(List_data_for_combo_box):
+                             # add to combobox
+                             self.combo_dataset_one.append_text(List_data_for_combo_box[currentListElement])
+                             self.combo_dataset_two.append_text(List_data_for_combo_box[currentListElement])
+                             currentListElement+=1
+
+                    #set combobox active
+                    self.combo_dataset_one.set_active(0)
+                    self.combo_dataset_two.set_active(0)
+
+            # else: "All Datafiles, choose up to 2 files"
+            else:
+                    self.dataTypesToPlot = "all_types"
+
+                    List_data_for_combo_box = Patrick.getAllDatasetFileNames(pathname,"all")
+
+
+                    # write all files into the combobox
+                    currentListElement = 0
+                    while currentListElement <len(List_data_for_combo_box):
+                             # add to combobox
+                             self.combo_dataset_one.append_text(List_data_for_combo_box[currentListElement])
+                             self.combo_dataset_two.append_text(List_data_for_combo_box[currentListElement])
+                             currentListElement+=1
+
+                    #set combobox active
+                    self.combo_dataset_one.set_active(0)
+                    self.combo_dataset_two.set_active(0)
+
+            if Patrick.debug:
+                print("Debug MainWindow.getDataSets: %s " % self.dataTypesToPlot)
+
+
+
+#  ******************************************************************************/
+# /*
 #  *     functionname:          @ callPlotFunctions
 #  *     parameter:             @
 #  *     returns:               @
@@ -359,7 +463,34 @@ class baseWindow:
 #  *******************************************************************************/
     def callPlotFunctions(self,widget):
 
-        Patrick.plotData(Patrick.datasetForPlot, self.entry_X.get_text(), self.entry_Y.get_text(), self.entry_Z.get_text(), self.entry_T.get_text(), self.plotmode, self.printInNewPlot)
+        Patrick.debug
+
+        if self.dataTypesToPlot == "errors_automatically":
+
+                # get all files with "errors" at the beginning in the pathname folder
+                self.list_data_for_plot = []
+                self.list_data_for_plot = Patrick.getAllDatasetFileNames(pathname, "errors")
+                temp = "\\"
+                temp = Patrick.getDatasetPath(pathname) +temp
+                print temp
+
+                # add to all filenames the path
+                currentListElement = 0
+                while currentListElement < len(self.list_data_for_plot):
+                    self.list_data_for_plot[currentListElement] = temp + self.list_data_for_plot[currentListElement]
+                    if Patrick.debug:
+                            print "Debug MainWindow.callPlotFunctions: ", self.list_data_for_plot[currentListElement]
+                    currentListElement+= 1
+
+                if Patrick.debug:
+                        print "Debug MainWindow.callPlotFunctions: ", self.list_data_for_plot
+
+                #start plotting
+                Patrick.plotData(self.list_data_for_plot, self.entry_X.get_text(), self.entry_Y.get_text(), self.entry_Z.get_text(), self.entry_T.get_text(), self.plotmode, self.printInNewPlot)
+
+        else:
+                Patrick.plotData(Patrick.datasetForPlot, self.entry_X.get_text(), self.entry_Y.get_text(), self.entry_Z.get_text(), self.entry_T.get_text(), self.plotmode, self.printInNewPlot)
+
 
 
 

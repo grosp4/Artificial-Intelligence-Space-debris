@@ -24,6 +24,7 @@ __author__ = 'Patrick'
 #  ******************************************************************************/
 
 import os
+import Patrick
 from os import getcwd
 from os import chdir
 
@@ -40,7 +41,7 @@ debug = 1
 #  *
 #  *
 #  *******************************************************************************/
-def getAllDatasetFileNames(pathname= '\dataset'):
+def getAllDatasetFileNames(pathname= '\dataset', dataSetType ="all"):
 
         # get current directory of package
         currentDirectory = getcwd()
@@ -52,14 +53,35 @@ def getAllDatasetFileNames(pathname= '\dataset'):
         parentDirectory = getcwd()
         chdir(currentDirectory)
 
+        list_of_files = []
         #create new path with dataset and parent directory
         datasetDirectory = parentDirectory + pathname
 
-        list_of_files = os.listdir(datasetDirectory)
+        if dataSetType == "all":
+
+                list_of_files = os.listdir(datasetDirectory)
+                #debug output
+                if debug:
+                    print "Debug getAllDatasetFileNames: all"
+
+
+        if dataSetType == "errors":
+                #debug output
+                if debug:
+                    print r"Debug getAllDatasetFileNames: errors"
+
+                # pattern you looking for
+                pattern = "errorsNN_"
+                a_list_filter = ['npy']
+
+                for r,d,f in os.walk(datasetDirectory):
+                    for file in f:
+                        if file[-3:] in a_list_filter and pattern in file:
+                            list_of_files.append(file)
 
         #debug output
         if debug:
-            print list_of_files
+            print "Debug getAllDatasetFileNames: " , list_of_files
 
         return list_of_files
 
@@ -89,7 +111,7 @@ def getDatasetPath(pathname):
 
         #debug output
         if debug:
-            print datasetDirectory
+            print "Debug getDatasetPath: ", datasetDirectory
 
 
         return datasetDirectory
@@ -100,7 +122,14 @@ def getDatasetPath(pathname):
 # to debug
 if __name__ == "__main__":
 
-    pathname = '\dataset'
-    getAllDatasetFileNames(pathname)
+    version = 1
+
+    if version == 1:
+        pathname = '\dataset'
+        getAllDatasetFileNames(pathname, "all")
+
+    if version == 2:
+         pathname = '\dataset'
+         getAllDatasetFileNames(pathname, "errors")
 
     getDatasetPath(pathname)
